@@ -3,8 +3,8 @@
 // 1) Isolation Forest — normal rejim simulyatsiyalaridan o'qitiladi (tasodifiy setpoint/klapan o'zgarishlari bilan)
 // 2) Sabab tashxisi — har bir nosozlik simulyatsiyasining o'rtacha imzosiga masofa (softmax)
 // 3) Prognoz — sath tendensiyasidan H/HH chegaragacha qolgan vaqt
-const FEATS=['L','K','W','lean/gas','Ti','To','Tr','dp','press','gas','dL','dK','dW','rich-lean','act_rich-cmd','cw'];
-const FEAT_UZ={L:'DA-1701 sathi',K:'FA-1702 sathi',W:'Yuvish sathi','lean/gas':'amin/gaz nisbati',Ti:'TI17007',To:'TI17005',Tr:'TI17006',dp:'PDI17010',press:'PI17012',gas:'gaz oqimi',dL:'DA-1701 sath tendensiyasi',dK:'FA-1702 sath tendensiyasi',dW:'yuvish sath tendensiyasi','rich-lean':'amin kirish/chiqish farqi','act_rich-cmd':'LC17003 buyruq/holat farqi',cw:'sovitish suvi'};
+const FEATS=['L','K','W','lean/gas','Ti','To','Tr','dp','press','gas','dL','dK','dW','rich-lean','act_rich-cmd','cw','resCO2','resTr','aiq'];
+const FEAT_UZ={L:'DA-1701 sathi',K:'FA-1702 sathi',W:'Yuvish sathi','lean/gas':'amin/gaz nisbati',Ti:'TI17007',To:'TI17005',Tr:'TI17006',dp:'PDI17010',press:'PI17012',gas:'gaz oqimi',dL:'DA-1701 sath tendensiyasi',dK:'FA-1702 sath tendensiyasi',dW:'yuvish sath tendensiyasi','rich-lean':'amin kirish/chiqish farqi','act_rich-cmd':'LC17003 buyruq/holat farqi',cw:'sovitish suvi',resCO2:'AI17001 o‘lchovi va raqamli egizak farqi',resTr:'TI17006 va raqamli egizak farqi',aiq:'AI17001 signal sifati'};
 const HINT={
  normal:{t:'Normal rejim',a:'Choralar talab qilinmaydi.',tag:''},
  amine:{t:'Amin ta’minoti kamayishi',a:'FCI17002 va amin nasosi/EC-1701 ta’minotini, filtrlar va qo‘lda klapanlarni tekshiring.',tag:'FCI17002'},
@@ -19,7 +19,12 @@ const HINT={
  lowPressure:{t:'Gaz manbai bosimi pasayishi',a:'Chegaradagi gaz bosimi (PI17012) va manba uskunasini tekshiring.',tag:'PI17012'},
  comm:{t:'LC17003 aloqa uzilishi',a:'DCS/PLC aloqa kanali va kontrollerni tekshiring; signal sifati BAD.',tag:'LC17003'},
  power:{t:'Aktuator quvvati yo‘q',a:'Klapan pozitsioneri/pnevmo ta’minotini tekshiring; klapanlar oxirgi holatda qotgan.',tag:'Aktuatorlar'},
- heat:{t:'Gaz kirish harorati oshishi',a:'EA-1706 sovitgichlari va yuqori oqim haroratini tekshiring; TI17007/TI17005 o‘sishi kuzatiladi.',tag:'EA-1706'}
+ heat:{t:'Gaz kirish harorati oshishi',a:'EA-1706 sovitgichlari va yuqori oqim haroratini tekshiring; TI17007/TI17005 o‘sishi kuzatiladi.',tag:'EA-1706'},
+ leanLoad:{t:'Regeneratsiya yomonlashdi (to‘yinmagan amin yuklanishi yuqori)',a:'Regenerator (desorber) bug‘ sarfi, qaynatgich harorati va to‘yinmagan amin laboratoriya tahlilini tekshiring.',tag:'EC-1701'},
+ foam:{t:'Absorberda ko‘piklanish',a:'PDI17010 o‘sishini kuzating; antiko‘pik dozalang, amin filtrlari va uglevodorod kondensati tushishini (FA-1702) tekshiring.',tag:'PDI17010'},
+ dilution:{t:'Amin konsentratsiyasi pasaygan',a:'Amin eritmasi konsentratsiyasini laboratoriyada aniqlang; yuvish suvi va qo‘shimcha suv balansini (FCI17003) tekshiring.',tag:'FCI17002'},
+ feedCO2:{t:'Xom gazda CO₂ ulushi oshgan',a:'Kirish gazi tarkibini (xromatograf) tekshiring; amin sarfini oshirish va gaz yuklamasini kamaytirish ko‘rib chiqiladi.',tag:'AI17001'},
+ analyzer:{t:'AI17001 analizatori ishlamayapti',a:'Analizator (AA17001) kalibrovka holati va namuna olish tizimini tekshiring; gaz sifatini laboratoriya tahlili bilan nazorat qiling.',tag:'AI17001'}
 };
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 const lastOf=(h,t0)=>{for(let i=h.length-1;i>=0;i--)if(h[i].t<=t0)return h[i];return h[0]};
@@ -27,7 +32,7 @@ function features(s,past,lastGoodL){
  const Lm=s.measured&&s.measured.L!=null?s.measured.L:lastGoodL;
  const pL=past.measured&&past.measured.L!=null?past.measured.L:Lm;
  const cw=s.cwFlow!=null?s.cwFlow:(s.actual.cw||0);
- return [Lm,s.K,s.W,s.lean/Math.max(s.g,1),s.Ti,s.To,s.Tr,s.dp,s.press,s.g,Lm-pL,s.K-past.K,s.W-past.W,s.rich-s.lean,s.actual.rich-s.command.rich,cw];
+  return [Lm,s.K,s.W,s.lean/Math.max(s.g,1),s.Ti,s.To,s.Tr,s.dp,s.press,s.g,Lm-pL,s.K-past.K,s.W-past.W,s.rich-s.lean,s.actual.rich-s.command.rich,cw,s.ai!=null&&s.aiExp>0?Math.log10(Math.max(1,s.ai)/Math.max(1,s.aiExp)):0,s.Tr-(s.TrExp||s.Tr),s.ai==null?1:0];
 }
 // ---- Isolation Forest ----
 const cF=n=>n<=1?0:n===2?1:2*(Math.log(n-1)+0.5772156649)-2*(n-1)/n;
