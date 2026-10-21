@@ -1,0 +1,30 @@
+{
+  "name": "da1701-absorber-ai",
+  "version": "2.0.0",
+  "private": true,
+  "engines": { "node": ">=20" },
+  "description": "DA-1701 amin absorberi: DCS/SIS integratsiyalashgan AI erta ogohlantirish va operator trenajyori",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "e2e": "node tests/e2e/smoke.js",
+    "build": "node tools/build-single.js",
+    "desktop": "electron .",
+    "dist:win": "electron-builder --win --publish never"
+  },
+  "main": "electron/main.js",
+  "devDependencies": {
+    "electron": "33.3.1",
+    "electron-builder": "25.1.8"
+  },
+  "author": "Loyixa-SGCC",
+  "build": {
+    "appId": "uz.sgcc.da1701",
+    "productName": "DA-1701 Absorber AI",
+    "copyright": "Loyixa-SGCC",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["electron/**", "index.html", "css/**", "js/**", "build/icon.png", "package.json"],
+    "asar": true,
+    "win": { "target": [{ "target": "nsis", "arch": ["x64"] }], "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "perMachine": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "createStartMenuShortcut": true, "shortcutName": "DA-1701 Absorber AI", "artifactName": "DA-1701-Absorber-AI-Setup-${version}.exe" }
+  }
+}
