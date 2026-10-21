@@ -1,6 +1,6 @@
 (()=>{'use strict';
 // GP1701: Anonim/Haqiqiy (parol bilan shifrlangan), Excel (.xlsx) import/eksport va qo'lda kiritish.
-// Quritgich-aparat.html'dagi Vault (AES-256-GCM + PBKDF2), buildXlsx va readXlsx funksiyalaridan foydalanadi. Mavjud modelga tegmaydi.
+// js/vault.js (AES-256-GCM + PBKDF2) va js/xlsx.js (buildXlsx, readXlsx) dan foydalanadi. Modelga tegmaydi.
 if(!window.AmineApp||!window.Vault)return;
 const $=id=>document.getElementById(id),M=()=>window.AmineApp.model,KEY='gp1701vault';
 const DEF={settings:{lowLow:5,low:10,high:85,highHigh:95,temp:70,ratio:.65},sp:{rich:45,drain:35,water:16.8},range:{gas:0,lean:0,wash:0,unit:'m³/soat'}};
