@@ -40,7 +40,7 @@ this.sis.step(this,dt);const A=this.sis.gate(a);
  for(const [key,tag] of [['L','DA-1701'],['K','FA-1702'],['W','Yuvish']]){const good=key!=='L'||!['sensor','comm'].includes(this.fault);defs.push([key+'_HH','HH',tag+' · sath juda yuqori',good&&s[key]>=p.highHigh,!good||s[key]<p.highHigh-2],[key+'_LL','LL',tag+' · sath juda past',good&&s[key]<=p.lowLow,!good||s[key]>p.lowLow+2])}
  defs.forEach(([id,level,text,on,off])=>{let was=this.alarmStates[id];if(!was&&on){this.alarmStates[id]={id,level,text,t:s.t,ack:false};this.event(level,id,text+' — o‘quv mezoni')}else if(was&&off){delete this.alarmStates[id];this.event('RESTORE',id,text+' — tiklandi')}})}
  sisReset(){return this.sis.resetAll(this)}
- sisESD(){this.sis.esd(this)}
+ sisESD(){this.sis.esd(this);this.sis.step(this,0)}
  sisBypass(id,on){return this.sis.setBypass(id,on,this)}
  sisChannel(k,mode){this.sis.setChannel(k,mode,this.s);this.event(mode==='ok'?'INFO':'WARN','SIS_CH',`SIS kanali ${k}: ${({ok:'tiklandi',bad:'signal yo‘q (BAD)',stuck:'qotib qoldi',low:'0 ga tushdi',high:'maksimumga chiqdi'})[mode]||mode}`)}
  acknowledge(){for(let a of Object.values(this.alarmStates))a.ack=true;for(let e of this.events)e.ack=true;this.event('INFO','ACK','Faol ogohlantirishlar tasdiqlandi')}

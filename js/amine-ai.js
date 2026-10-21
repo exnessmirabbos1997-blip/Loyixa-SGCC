@@ -49,13 +49,15 @@ function simulate(opts){const m=mk(),R=rng(opts.seed||1),T=opts.T,out=[],hist=[m
   if(k%10===9){const s=m.snapshot();if(s.measured.L!=null)lastGood=s.measured.L;hist.push(s);const past=lastOf(hist,s.t-20);out.push({t:s.t,x:features(s,past,lastGood),s,alarms:s.alarms.length,alarmLevels:s.alarms.map(a=>a.level)})}}
  return out}
 let AI=null;
-function train(){
- const X=[];for(let i=0;i<14;i++){for(const r of simulate({seed:100+i,T:320,randomize:true}))if(r.t>=70&&((r.t|0)%2===0))X.push(r.x)}
- for(const r of simulate({seed:99,T:420}))if(r.t>=70&&((r.t|0)%3===0))X.push(r.x);
+const tick=()=>new Promise(r=>setTimeout(r,0));
+// o'qitish bo'laklarga bo'lingan: har simulyatsiyadan keyin brauzerga navbat beriladi (interfeys qotmaydi)
+async function train(){
+ const X=[];for(let i=0;i<14;i++){for(const r of simulate({seed:100+i,T:320,randomize:true}))if(r.t>=70&&((r.t|0)%2===0))X.push(r.x);await tick()}
+ for(const r of simulate({seed:99,T:420}))if(r.t>=70&&((r.t|0)%3===0))X.push(r.x);await tick();
  const mean=FEATS.map((_,j)=>X.reduce((a,r)=>a+r[j],0)/X.length);
  const sd=FEATS.map((_,j)=>{const v=Math.sqrt(X.reduce((a,r)=>a+(r[j]-mean[j])**2,0)/X.length);return Math.max(v,.03*Math.abs(mean[j])+.05)});
  const Z=X.map(r=>r.map((v,j)=>(v-mean[j])/sd[j]));
- const forest=new IForest(Z,100,256,11);
+ const forest=new IForest(Z,100,256,11);await tick();
  const KN=Z.filter((_,i)=>i%2===0);const knn=(z,skip)=>{const ds=[];for(const q of KN){let s=0;for(let j=0;j<z.length;j++){const d=z[j]-q[j];s+=d*d}if(skip&&s<1e-12)continue;ds.push(s)}ds.sort((a,b)=>a-b);return Math.sqrt(ds[4])};
  const kn=Z.filter((_,i)=>i%2===1).map(z=>knn(z,true)).sort((a,b)=>a-b);const kq=p=>kn[Math.min(kn.length-1,Math.floor(p*kn.length))];
  const sc=Z.map(z=>forest.score(z)).sort((a,b)=>a-b),q=p=>sc[Math.min(sc.length-1,Math.floor(p*sc.length))];
@@ -63,7 +65,7 @@ function train(){
  // nosozlik imzolari
  const cent={normal:Z.reduce((a,z)=>a.map((v,j)=>v+z[j]/Z.length),FEATS.map(()=>0))};
  const faults=Object.keys(window.AmineConfig.FAULTS).filter(f=>f!=='normal');
- for(const f of faults){const rows=simulate({seed:900,T:170,warm:50,fault:f}).filter(r=>r.t>=70);const zs=rows.map(r=>r.x.map((v,j)=>(v-mean[j])/sd[j]));cent[f]=zs.reduce((a,z)=>a.map((v,j)=>v+z[j]/zs.length),FEATS.map(()=>0))}
+ for(const f of faults){const rows=simulate({seed:900,T:170,warm:50,fault:f}).filter(r=>r.t>=70);const zs=rows.map(r=>r.x.map((v,j)=>(v-mean[j])/sd[j]));cent[f]=zs.reduce((a,z)=>a.map((v,j)=>v+z[j]/zs.length),FEATS.map(()=>0));await tick()}
  AI={mean,sd,forest,base,warn,top,cent,n:X.length,knn,k50:kq(.5),k995:kq(.995)};return AI}
 function riskAll(z,sc){const Rif=riskFromScore(sc),dk=AI.knn(z,false),r=dk/AI.k995,Rk=r<.7?0:r<1?.4*(r-.7)/.3:Math.min(1,.4+.6*(r-1)/1.5),zm=Math.max(...z.map(Math.abs)),Rz=zm<4.5?0:Math.min(1,.4+.6*(zm-4.5)/6);
  return{R:Math.max(Rif,Rk,Rz),Rif,Rk,Rz,dk,diag:diagnose(z)}}
@@ -88,13 +90,13 @@ function evaluate(){if(!AI||!window.AmineApp)return null;const s=window.AmineApp
  if(s.t!==live.lastT){live.series.push([s.t,R]);if(live.series.length>240)live.series.shift();if(s.t<live.lastT)live.series=[[s.t,R]];live.lastT=s.t}
  return live}
 // ---- Ishonchlilik sinovi: AI ogohlantirishi vs. PLC alarmi ----
-function leadTest(){const faults=Object.keys(window.AmineConfig.FAULTS).filter(f=>f!=='normal'),rows=[];
+async function leadTest(onp){const faults=Object.keys(window.AmineConfig.FAULTS).filter(f=>f!=='normal'),rows=[];
  for(const f of faults){const run=simulate({seed:555,T:700,warm:60,fault:f});let ai=null,plc=null,hit=0,tot=0,diagOK=null;const hist=[],lg={v:45};
   for(const r of run){hist.push(r.s);const zz=r.x.map((v,j)=>(v-AI.mean[j])/AI.sd[j]);let R=riskAll(zz,AI.forest.score(zz)).R;if(r.s.measured.L==null)R=Math.max(R,.55);
    const prog=prognosis(r.s,hist,{high:85,highHigh:95,low:10,lowLow:5});const soon=prog.map(q=>q.tHH??q.tH).filter(v=>v!=null);if(soon.length&&Math.min(...soon)<240)R=Math.max(R,.4+.6*(1-Math.min(...soon)/240));
    if(r.t>60){if(ai==null&&R>=.4)ai=r.t-60;if(plc==null&&r.alarms>0)plc=r.t-60}
    if(r.t>=100&&r.t<=160){tot++;const d=diagnose(r.x.map((v,j)=>(v-AI.mean[j])/AI.sd[j]))[0].id;if(d===f||(f==='comm'&&d==='sensor'))hit++}}
-  rows.push({f,ai,plc,lead:ai!=null&&plc!=null?plc-ai:null,diag:tot?hit/tot:0})}
+  rows.push({f,ai,plc,lead:ai!=null&&plc!=null?plc-ai:null,diag:tot?hit/tot:0});if(onp)onp(rows.length/faults.length);await tick()}
  // yolg‘on signal: faqat normal rejim
  const nrm=simulate({seed:777,T:600,randomize:true}).filter(r=>r.t>=70);let fa=0;for(const r of nrm){const zz=r.x.map((v,j)=>(v-AI.mean[j])/AI.sd[j]);if(riskAll(zz,AI.forest.score(zz)).R>=.4)fa++}
  return{rows,falseRate:fa/nrm.length,n:nrm.length}}
@@ -110,7 +112,7 @@ function build(){
  <div class="a-card a-pad" style="grid-column:1/-1"><h2>AI ishonchlilik sinovi</h2><p class="a-muted" style="margin:0 0 8px">Har bir nosozlik 60 s normal ishlagandan keyin kiritiladi va 700 s kuzatiladi: AI qachon ogohlantirdi, PLC alarmi qachon ishladi, tashxis to‘g‘ri chiqdimi. Normal rejimda yolg‘on signal ulushi ham o‘lchanadi. Cheklov: klapanlar oxirgi holatda qotganda (aktuator quvvati yo‘q) yoki gaz oshishi sarf bilan chegaralanganda jarayon o‘zgarmasa, AI ham o‘zgarish ko‘rmaydi.</p><button id="aiRun" class="asec">Sinovni ishga tushirish</button> <span id="aiRunInfo" class="a-muted"></span><div class="ai-wrap"><table class="ai-tab" id="aiLead" style="margin-top:8px"></table></div></div>`;
  panel.insertBefore(box,panel.firstChild);
  const strip=document.createElement('div');strip.id='aiStrip';strip.innerHTML='<span class="dot" id="aiSDot"></span><span>AI xavf indeksi <b id="aiSR">0.00</b></span><span id="aiSState"></span><span class="a-muted" id="aiSDiag"></span>';const om=document.querySelector('[data-ap="overview"]');om.insertBefore(strip,om.firstChild);
- $('aiRun').onclick=()=>{$('aiRun').disabled=true;$('aiRunInfo').textContent='Hisoblanmoqda…';setTimeout(()=>{try{const r=leadTest();window.AmineAI.lastTest=r;const F=window.AmineConfig.FAULTS;$('aiLead').innerHTML='<thead><tr><th>Nosozlik</th><th>AI ogohlantirdi</th><th>PLC alarmi</th><th>AI ustunligi</th><th>Tashxis aniqligi</th></tr></thead><tbody>'+r.rows.map(x=>`<tr><td>${esc(F[x.f])}</td><td>${x.ai==null?'—':x.ai.toFixed(0)+' s'}</td><td>${x.plc==null?'alarm yo‘q':x.plc.toFixed(0)+' s'}</td><td>${x.lead==null?(x.ai!=null&&x.plc==null?'AI aniqladi, PLC yo‘q':'—'):(x.lead>0?'+'+x.lead.toFixed(0)+' s oldin':x.lead.toFixed(0)+' s')}</td><td>${(x.diag*100).toFixed(0)}%</td></tr>`).join('')+`</tbody><tfoot><tr><td colspan="5" class="a-muted">Normal rejimda yolg‘on signal: ${(r.falseRate*100).toFixed(1)}% (${r.n} namuna). Natija o‘quv modeli ichida; real zavod tasdig‘i emas.</td></tr></tfoot>`;$('aiRunInfo').textContent=''}catch(e){$('aiRunInfo').textContent='Xato: '+e.message}$('aiRun').disabled=false},30)}}
+ $('aiRun').onclick=()=>{$('aiRun').disabled=true;$('aiRunInfo').textContent='Hisoblanmoqda…';setTimeout(async()=>{try{const r=await leadTest(f=>{$('aiRunInfo').textContent='Hisoblanmoqda… '+Math.round(f*100)+' %'});window.AmineAI.lastTest=r;const F=window.AmineConfig.FAULTS;$('aiLead').innerHTML='<thead><tr><th>Nosozlik</th><th>AI ogohlantirdi</th><th>PLC alarmi</th><th>AI ustunligi</th><th>Tashxis aniqligi</th></tr></thead><tbody>'+r.rows.map(x=>`<tr><td>${esc(F[x.f])}</td><td>${x.ai==null?'—':x.ai.toFixed(0)+' s'}</td><td>${x.plc==null?'alarm yo‘q':x.plc.toFixed(0)+' s'}</td><td>${x.lead==null?(x.ai!=null&&x.plc==null?'AI aniqladi, PLC yo‘q':'—'):(x.lead>0?'+'+x.lead.toFixed(0)+' s oldin':x.lead.toFixed(0)+' s')}</td><td>${(x.diag*100).toFixed(0)}%</td></tr>`).join('')+`</tbody><tfoot><tr><td colspan="5" class="a-muted">Normal rejimda yolg‘on signal: ${(r.falseRate*100).toFixed(1)}% (${r.n} namuna). Natija o‘quv modeli ichida; real zavod tasdig‘i emas.</td></tr></tfoot>`;$('aiRunInfo').textContent=''}catch(e){$('aiRunInfo').textContent='Xato: '+e.message}$('aiRun').disabled=false},30)}}
 function draw(){const L=live;if(!L.diag.length)return;const R=L.R,c=col(R);
  const sd=$('aiSDot');if(sd){sd.style.background=c;$('aiSR').textContent=R.toFixed(2);$('aiSState').textContent=L.state;$('aiSState').style.color=c;$('aiSDiag').textContent=L.state==='NORMAL'?'Anomaliya yo‘q':'Eng ehtimoliy sabab: '+HINT[L.diag[0].id].t+' ('+Math.round(L.diag[0].p*100)+'%)'}
  const panel=document.querySelector('[data-ap="ai"]');if(!panel||!panel.classList.contains('on'))return;
@@ -120,6 +122,6 @@ function draw(){const L=live;if(!L.diag.length)return;const R=L.R,c=col(R);
  if(L.R<.4){$('aiDiag').innerHTML='<div class="a-muted" style="display:block">Anomaliya aniqlanmadi — sabab tashxisi faqat R ≥ 0.40 bo‘lganda ko‘rsatiladi.</div>';$('aiAct').innerHTML='Modelda faol nomutanosiblik yo‘q.';}else{const nd=L.diag.slice(0,3);$('aiDiag').innerHTML=nd.map(d=>`<div><span>${esc(HINT[d.id].t)}</span><span class="tr"><i style="width:${(d.p*100).toFixed(0)}%"></i></span><b>${Math.round(d.p*100)}%</b></div>`).join('');
  const h=HINT[nd[0].id];$('aiAct').innerHTML=nd[0].id==='normal'?'Modelda faol nomutanosiblik yo‘q.':`<b>${esc(h.t)}</b>${h.tag?' · '+esc(h.tag):''}<br>${esc(h.a)}`;}
  $('aiProg').innerHTML=L.prog.map(r=>r.v==null?`<tr><td>${esc(r.name)}</td><td colspan="4" class="a-muted">Signal sifati BAD — prognoz o‘chirilgan</td></tr>`:`<tr><td>${esc(r.name)}</td><td>${r.v.toFixed(1)} %</td><td>${r.rate>=0?'+':''}${(r.rate*60).toFixed(1)} %/min</td><td>${r.tH!=null?fmtT(r.tH):r.v>=r.H?'oshgan':'—'}</td><td>${r.tHH!=null?fmtT(r.tHH):r.v>=r.HH?'oshgan':'—'}</td></tr>`).join('')}
-function init(){try{train();build();window.AmineAI={ready:true,live,evaluate,leadTest,features:FEATS,info:()=>({n:AI.n,base:AI.base,warn:AI.warn,top:AI.top}),simulate,diagnose:(z)=>diagnose(z),get ai(){return AI}};setInterval(()=>{try{evaluate();draw()}catch(e){console.error(e)}},500);evaluate();draw()}catch(e){console.error('AmineAI',e);window.AmineAI={ready:false,error:String(e)}}}
+async function init(){try{window.AmineAI={ready:false,training:true};await train();build();window.AmineAI={ready:true,live,evaluate,leadTest,features:FEATS,info:()=>({n:AI.n,base:AI.base,warn:AI.warn,top:AI.top}),simulate,diagnose:(z)=>diagnose(z),get ai(){return AI}};setInterval(()=>{try{evaluate();draw()}catch(e){console.error(e)}},500);evaluate();draw()}catch(e){console.error('AmineAI',e);window.AmineAI={ready:false,error:String(e)}}}
 if(window.AmineModel&&window.AmineApp)setTimeout(init,60);else window.AmineAI={ready:false,error:'AmineApp topilmadi'};
 })();

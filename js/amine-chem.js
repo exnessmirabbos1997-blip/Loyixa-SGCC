@@ -52,7 +52,9 @@ class AmineChem{
     let lo=aL,hi=p.aMax;for(let i=0;i<32;i++){const m=(lo+hi)/2;if(ev(m).an>m)lo=m;else hi=m}
     const a=(lo+hi)/2,r=ev(a);
     return{co2:r.yo*1e6,h2s:r.yoH*1e6,a,Q:r.Q,To,Tr:r.Tr,rem:100*(1-r.yo/yC),remH:100*(1-r.yoH/yH),G,Lm}}
-  step(o,dt){const x=this.x,t=this.solve(o);this.target=t;
+  // barqaror holat har 0,5 s da yoki kirishlar sezilarli o'zgarganda qayta yechiladi (dinamika inersiyalar orqali uzluksiz)
+  step(o,dt){const x=this.x,l=this.last;this.acc=(this.acc||0)+dt;
+    if(!this.target||this.acc>=.5||!l||l.fault!==o.fault||Math.abs(l.g-o.g)>.3||Math.abs(l.lean-o.lean)>.3||Math.abs(l.Ti-o.Ti)>.2){this.target=this.solve(o);this.last={g:o.g,lean:o.lean,Ti:o.Ti,fault:o.fault};this.acc=0}const t=this.target;
     x.co2=lag(x.co2,t.co2,dt,45);x.h2s=lag(x.h2s,t.h2s,dt,45);x.a=lag(x.a,t.a,dt,120);x.Q=lag(x.Q,t.Q,dt,30);
     x.To=lag(x.To,t.To,dt,28);x.Tr=lag(x.Tr,t.Tr,dt,24);x.rem=lag(x.rem,t.rem,dt,45);x.remH=lag(x.remH,t.remH,dt,45);
     this.bufT+=dt;if(this.bufT>=1){this.bufT=0;this.buf.push(x.co2);if(this.buf.length>this.p.anaDead)this.buf.shift()}

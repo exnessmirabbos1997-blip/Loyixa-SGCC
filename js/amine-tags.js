@@ -22,6 +22,6 @@ function walk(r){if(r.nodeType===3)return doText(r);if(r.nodeType!==1)return;con
 function restore(r){const w=document.createTreeWalker(r,5);let n;while((n=w.nextNode())){if(n.nodeType===3){if(orig.has(n)){n.nodeValue=orig.get(n);orig.delete(n)}}else if(n.__gpo){for(const k in n.__gpo)n.setAttribute(k,n.__gpo[k]);n.__gpo=null}}if(r.__gpo){for(const k in r.__gpo)r.setAttribute(k,r.__gpo[k]);r.__gpo=null}}
 const obs=new MutationObserver(rs=>{for(const r of rs){if(r.type==='childList'){for(const n of r.addedNodes)walk(n)}else if(r.type==='characterData')doText(r.target);else doAttrs(r.target)}});
 function start(){walk(document.documentElement);obs.observe(document.documentElement,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:ATTR})}
-const st=document.createElement('style');st.textContent="body.gp-anon.amine-mode .brand b::after{content:'Obyekt-1 · Amin'}body.gp-anon.amine-mode .navg::after{content:'A-1 / S-1'}body:not(.gp-real) .gp-dcs{display:none!important}";document.head.appendChild(st);
+const st=document.createElement('style');st.textContent="body:not(.gp-real) .gp-dcs{display:none!important}";document.head.appendChild(st);
 document.body.classList.add('gp-anon');start();
 })();
