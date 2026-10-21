@@ -1,1 +1,2 @@
-(()=>{const m=document.getElementById('plantMode');if(m&&m.value!=='amine'){m.value='amine';m.dispatchEvent(new Event('change'))}})()
+// Boshlang'ich bo'lim: manzildagi #hash bo'yicha
+(()=>{const v=(location.hash||'').slice(1);if(v&&document.querySelector(`.nav[data-view="${v}"]`))showView(v)})();

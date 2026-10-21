@@ -2,10 +2,10 @@
 <html lang="uz"><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self'; connect-src 'self' data: blob:; frame-src about: blob: data:; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Quritish qurilmasi uchun AI asosida erta ogohlantirish, hodisa tahlili va sabab tashxisi simulyatori.">
+<meta name="description" content="DA-1701 amin absorberi: AI asosida erta ogohlantirish, SIS/ESD, kimyoviy tozalash modeli va operator trenajyori.">
 <meta name="theme-color" content="#0a1018">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232457d6'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3EQ%3C/text%3E%3C/svg%3E">
-<title>Absorber A-1 — Amin bilan gaz tozalash simulyatori</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232457d6'/%3E%3Ctext x='16' y='23' font-size='20' font-family='Arial' font-weight='700' text-anchor='middle' fill='white'%3EA%3C/text%3E%3C/svg%3E">
+<title>DA-1701 Absorber AI — amin bilan gaz tozalash trenajyori</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,209 +16,31 @@
 <div class="btns"><button type="submit">Tasdiqlash</button><button type="button" class="sec" id="pwCancel">Bekor qilish</button></div></form></dialog>
 <div class="app">
 <nav class="side" aria-label="Bo‘limlar">
-<div class="brand"><i>Q</i><div><b>Quritgich aparat AI</b><small>Erta ogohlantirish</small></div></div>
-<div class="navg">Nam materialni quritish qurilmasi</div>
+<div class="brand"><i>A</i><div><b>DA-1701 · Amin</b><small>OPERATOR TRENAJYORI</small></div></div>
+<div class="navg">DA-1701 / FA-1702</div>
 <button class="nav" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Umumiy ko‘rinish</button>
 <button class="nav" data-view="mimic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="12" rx="2"/><rect x="14" y="5" width="7" height="12" rx="2"/><path d="M10 11h4M6 17v3h12v-3"/></svg>Mnemosxema</button><button class="nav" data-view="3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>3D ko‘rinish</button>
 <button class="nav" data-view="trends"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>Trendlar</button>
-<button class="nav" data-view="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3L12 3z"/><path d="M12 10v4M12 17v.5"/></svg>AI xabarlari va indeks</button>
-<button class="nav" data-view="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M8 3h8l4 4v14H4V3z"/></svg>Hodisa tahlili (Review)</button>
-<button class="nav" data-view="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Hodisalar jurnali<span class="bdg"></span></button>
-<button class="nav" data-view="batch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg>Ommaviy sinov</button>
-<button class="nav" data-view="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>O‘z ma’lumotingiz</button>
+<button class="nav" data-view="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3L12 3z"/><path d="M12 10v4M12 17v.5"/></svg>Diagnostika</button>
+<button class="nav" data-view="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M8 3h8l4 4v14H4V3z"/></svg>Hodisani qayta ko‘rish</button>
+<button class="nav" data-view="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Hodisalar jurnali</button>
+<button class="nav" data-view="batch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg>Ssenariylarni sinash</button>
+<button class="nav" data-view="data"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Ma’lumotlar va P&amp;ID</button>
 <button class="nav" data-view="math"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14M5 5l7 7-7 7h14"/></svg>Matematik model</button>
-<button class="nav" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Sozlamalar</button>
-<div class="foot">Simulyatsiya · 4 soat · 10 s</div>
+<button class="nav" data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Boshqaruv va sozlamalar</button>
+<div class="foot">P&amp;ID asosida · Offline</div>
 </nav>
 <main class="mainwrap" id="main">
-<div class="topbar"><span class="crumb">Quritish qurilmasi › <b id="crumb">Umumiy ko‘rinish</b></span>
-<span class="live"><i></i><span>Simulyatsiya · Real-time<small id="clock">—</small></span></span>
-<select class="tbtn" id="tags" aria-label="Qiymatlar: anonim (standart) yoki haqiqiy" title="Qiymatlar: anonim (standart) / haqiqiy (parol bilan)"><option value="anon">Anonim</option><option value="plant">Haqiqiy</option></select><select class="tbtn" id="lang" aria-label="Til / Язык / Language"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select><button class="tbtn" id="theme" aria-label="Kun / tun rejimi">☾ / ☀</button><button class="tbtn pri" id="refresh">↻ Yangilash</button></div>
-<div class="mnav" id="mnav"><button class="mn" data-view="overview">Umumiy ko‘rinish</button><button class="mn" data-view="mimic">Mnemosxema</button><button class="mn" data-view="3d">3D ko‘rinish</button><button class="mn" data-view="trends">Trendlar</button><button class="mn" data-view="ai">AI xabarlari va indeks</button><button class="mn" data-view="review">Hodisa tahlili (Review)</button><button class="mn" data-view="journal">Hodisalar jurnali<span class="bdg"></span></button><button class="mn" data-view="batch">Ommaviy sinov</button><button class="mn" data-view="data">O‘z ma’lumotingiz</button><button class="mn" data-view="math">Matematik model</button><button class="mn" data-view="settings">Sozlamalar</button></div>
-<div class="ctrl" id="ctrl">
-<div class="f" style="min-width:260px"><label for="kind">Holat turi</label><div style="display:flex;gap:6px"><select id="kind" style="flex:1;min-width:0"></select><button type="button" class="tbtn" id="kindEdit" aria-label="Holat turlarini tahrirlash" title="Holat turlarini tahrirlash">✎</button></div></div>
-<div class="f" style="min-width:90px;width:90px"><label for="seed">Variant</label><input id="seed" type="number" value="3" min="1" step="1"></div>
-<button id="run">▶ Ishga tushirish</button><button id="show" class="sec">To‘liq ko‘rsatish</button>
-<div class="f" style="min-width:120px"><label for="speed">Tezlik</label><input id="speed" type="range" min="1" max="12" step="1" value="5"></div>
-<p class="grow" id="status">Model o‘qitilmoqda…</p>
-</div>
+<div class="topbar"><span class="crumb">DA-1701 › <b id="crumb">Umumiy ko‘rinish</b></span>
+<span class="live"><i></i><span>O‘quv simulyatsiyasi · Offline</span></span>
+<select class="tbtn" id="lang" aria-label="Til / Язык / Language"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select><button class="tbtn" id="theme" aria-label="Kun / tun rejimi">☾ / ☀</button></div>
+<div class="mnav" id="mnav"><button class="mn" data-view="overview">Umumiy ko‘rinish</button><button class="mn" data-view="mimic">Mnemosxema</button><button class="mn" data-view="3d">3D ko‘rinish</button><button class="mn" data-view="trends">Trendlar</button><button class="mn" data-view="ai">Diagnostika</button><button class="mn" data-view="review">Hodisani qayta ko‘rish</button><button class="mn" data-view="journal">Hodisalar jurnali</button><button class="mn" data-view="batch">Ssenariylarni sinash</button><button class="mn" data-view="data">Ma’lumotlar va P&amp;ID</button><button class="mn" data-view="math">Matematik model</button><button class="mn" data-view="settings">Boshqaruv va sozlamalar</button></div>
 
-<section class="view" id="v-overview">
-<div class="vh"><div><h1>Umumiy ko‘rinish</h1><p>Hodisagacha berilgan ogohlantirishlar, qurilma mnemosxemasi, AI xabarlari va xavf indeksi tarkibi.</p></div></div>
-<div class="stats" aria-live="polite">
-<div class="stat g"><b id="sIdx">—</b><span>AI indeksi ogohlantirishi (hodisadan oldin)</span></div>
-<div class="stat a"><b id="sAl">—</b><span>Mavjud PLC alarmlari (hodisadan oldin)</span></div>
-<div class="stat d"><b id="sDg">—</b><span>AI diagnostika xabari (hodisadan oldin)</span></div>
-<div class="stat c"><b id="sCb">—</b><span>Birgalikda: eng erta ogohlantirish</span></div>
-</div>
-<div class="ovgrid"><div class="card" style="padding:10px"><div data-place="mimic"></div></div><div class="card"><div data-place="kv"></div><div style="height:14px"></div><div data-place="bars"></div></div></div>
-</section>
-
-<section class="view" id="v-mimic">
-<div class="vh"><div><h1>Mnemosxema</h1><p>Nam materialni quritish qurilmasining texnologik va avtomatlashtirish sxemasi (chizma asosida). Qiymatlar real vaqtda yangilanadi: bunker sathi, shnek, gorelka alangasi, klapanlar holati va material oqimi.</p></div></div>
-<div class="card" style="padding:10px;overflow-x:auto"><div data-place="mimic"></div><div id="mimic" role="region" tabindex="0" aria-label="Qurilma mnemosxemasi"></div>
-<p class="note">Sxema: nam material konveyeri, bunker va aralashtirgich (M02), shnekli ta’minlagich (M01), tarozi (WT), o‘txona va gorelka, quritgich, siklon, yengli filtr, tayyor mahsulot bunkeri, so‘ruvchi ventilyator, mahsulot konveyeri, invertor, PLC, analog chiqish moduli va personal kompyuter. Yashil klapan — ochiq; qizil yoki sariq hoshiya — chegaradan chiqqan o‘lchov; “GORELKA TRIP” paneli himoya ishlaganda qizil yonadi.</p></div>
-</section>
-
-<section class="view" id="v-3d">
-<div class="vh"><div><h1>3D ko‘rinish</h1><p>Quritish qurilmasining uch o‘lchamli ko‘rinishi — mnemosxema bilan bir xil ma’lumotlardan olinadi (gorelka, quritish barabani, bunker, konveyerlar, siklon, filtr, mo‘ri, PLC va AI xavf indeksi). Sichqoncha bilan aylantiring, g‘ildirak bilan yaqinlashtiring, uskunani bosib ma’lumot ko‘ring. Pastdagi o‘ynatish tugmasi bilan jarayonni yurgizing.</p></div></div>
-<div class="card" style="padding:0;overflow:hidden"><div id="k3dWrap"><canvas id="k3dCv"></canvas>
-<div id="k3dBar"><button id="k3dMenu" type="button" aria-expanded="false" aria-controls="k3dBar">☰ Boshqaruv</button><button data-cam="bosh">Umumiy</button><button data-cam="konv">Konveyer</button><button data-cam="bunker">Bunker</button><button data-cam="yoqish">O‘txona</button><button data-cam="baraban">Baraban</button><button data-cam="siklon">Siklon / filtr / mo‘ri</button><button data-cam="mahsulot">Mahsulot</button><button data-cam="boshq">PLC xonasi</button><button data-cam="tepa">Yuqoridan</button><button id="k3dAuto">Aylanish</button><select id="k3dQ" title="Sifat" aria-label="3D sifati"><option value="2">Yuqori</option><option value="1">O‘rta</option><option value="0">Past</option></select><span id="k3dFps"></span></div>
-<div id="k3dLeg"><i style="background:#2dd4bf"></i>Signal <i style="background:#ef5350"></i>PLC himoya buyrug‘i <i style="background:#4aa8ff"></i>Tarmoq <i style="background:#ff7a30"></i>Issiq gaz <i style="background:#7a5330"></i>Material</div>
-<div id="k3dCmp"></div><div id="k3dRep"></div><div id="k3dToast"></div><div id="k3dQuiz"></div><div id="k3dTip"></div><div id="k3dFall">Bu qurilmada 3D (WebGL) ishlamadi. Mnemosxema bo‘limidan foydalaning.</div></div>
-<div id="k3dInfo"></div></div>
-</section>
-
-<section class="view" id="v-trends">
-<div class="vh"><div><h1>Trendlar</h1><p>Haroratlar, havo/gaz nisbati, namlik, bunker sathi va dinamik xavf indeksi.</p></div>
-<label class="chk"><input type="checkbox" id="truth"> Haqiqiy qiymatlarni ham ko‘rsatish (faqat simulyatsiya)</label></div>
-<div class="card">
-<p class="cap" id="cap1" style="margin-top:0">TT01 — o‘txona harorati, °C</p><canvas id="c1" role="img" aria-labelledby="cap1" height="150"></canvas>
-<p class="cap" id="cap2">TT02 — quritish agenti harorati, °C (nuqtali chiziqlar — modeldan kutilgan qiymat ±2σ; uzuq chiziq — haqiqiy qiymat)</p><canvas id="c2" role="img" aria-labelledby="cap2" height="150"></canvas>
-<p class="cap" id="cap3">λ — birlamchi havo / gaz nisbati (FT02 / 9,5·FT01)</p><canvas id="c3" role="img" aria-labelledby="cap3" height="130"></canvas>
-<p class="cap" id="cap4">Namlik, %: AT02 mahsulot (qora), AT01 kirish (kulrang), AI bashorati (sariq uzuq)</p><canvas id="c4" role="img" aria-labelledby="cap4" height="150"></canvas>
-<p class="cap" id="cap5">LT01 — bunker sathi, %</p><canvas id="c5" role="img" aria-labelledby="cap5" height="130"></canvas>
-<p class="cap" id="cap6">Dinamik xavf indeksi R(t)</p><canvas id="c6" role="img" aria-labelledby="cap6" height="150"></canvas>
-<div class="btns"><button id="xExp" class="sec">Excel’ga yuklab olish (.xlsx)</button></div>
-</div>
-</section>
-
-<section class="view" id="v-ai">
-<div class="vh"><div><h1>AI xabarlari va xavf indeksi</h1><p>Operatorga beriladigan xabarlar, qurilma holati va indeks tashkil etuvchilari.</p></div></div>
-<div class="sgrid"><div class="card"><div data-place="kv"></div></div><div class="card"><div data-place="bars"></div></div></div>
-<div id="kvwrap"><div class="kv" id="kv"></div><h2 style="margin:12px 0 0;font-size:14px">AI xabarlari</h2><ul class="msgs" id="msgs"></ul></div>
-<div id="barswrap"><h2 style="margin:0;font-size:14px" id="whyT">Indeks tarkibi</h2><div class="bars" id="bars"></div><p class="note" id="why"></p></div>
-</section>
-
-<section class="view" id="v-review">
-<div class="vh"><div><h1>Hodisa tahlili (Review)</h1><p>Tanlangan holat bo‘yicha avtomatik tahlil: sabab, voqealar ketma-ketligi, parametrlar o‘zgarishi, texnolog va KIP xulosasi.</p></div></div>
-<div class="btns" style="margin:0 0 10px"><button id="rvPdf" class="sec">PDF hisobot (chop etish)</button></div><div class="card" id="rv"><div id="review"><p class="note">Hisoblanmoqda…</p></div></div>
-</section>
-
-<section class="view" id="v-journal">
-<div class="vh"><div><h1>Hodisalar jurnali</h1><p>Tanlangan holat bo‘yicha PLC, AI va tizim voqealari vaqt tartibida. Operator har bir voqeani tasdiqlaydi (ACK).</p></div></div>
-<div class="card"><div class="btns" style="margin-top:0"><button id="jAck">Hammasini tasdiqlash</button><button id="jCsv" class="sec">CSV’ga eksport</button><button id="jClr" class="sec">Tasdiqlarni tozalash</button></div>
-<p class="note" id="jInfo"></p><div class="tw" tabindex="0"><table id="jTab"></table></div></div>
-</section>
-
-<section class="view" id="v-batch">
-<div class="vh"><div><h1>Ommaviy sinov</h1><p>Har bir nosozlik turidan 10 tadan va 50 ta normal ish ssenariysi (joriy sozlamalar bilan).</p></div></div>
-<div class="card"><div class="btns" style="margin-top:0"><button id="bRun">Barcha ssenariylar bo‘yicha sinash</button><button id="b5" class="sec">5 ta variant bo‘yicha o‘rtacha</button></div>
-<div class="prog hide" id="prog"><div></div></div><div id="bOut" aria-live="polite"></div>
-<canvas id="rocCv" role="img" aria-labelledby="rocCap" class="hide" width="460" height="340" style="width:460px;max-width:100%;height:auto;margin-top:14px"></canvas><p class="note hide" id="rocCap"></p></div>
-</section>
-
-<section class="view" id="v-data">
-<div class="vh"><div><h1>O‘z ma’lumotingiz</h1><p>PLC/SCADA trendini Excel (.xlsx) yoki CSV fayldan yuklang. Fayl brauzerdan tashqariga chiqmaydi.</p></div></div>
-<div class="card">
-<p class="note" style="margin-top:0">Majburiy ustunlar: <b>TT01, TT02, FT01, FT02, FT03, LT01, WT, AT01, AT02</b>. Ixtiyoriy: <b>U11, U12</b> (klapanlar, %), <b>M01, M02</b> (tezlik, %) — ular bo‘lmasa tegishli izchillik tekshiruvlari o‘chiriladi.</p>
-<div class="pgrid" style="max-width:520px">
-<div><label for="pDT">Diskretlik, soniya</label><input id="pDT" type="number" value="10" min="1" max="3600"></div>
-<div><label for="pQg">Gaz sarfi maks. Q<sub>g,max</sub>, m³/soat</label><input id="pQg" type="number" value="400"></div>
-<div><label for="pQa">Birlamchi havo maks. Q<sub>a1,max</sub>, m³/soat</label><input id="pQa" type="number" value="4500"></div>
-<div><label for="pFm">Ta’minlagich maks. F<sub>max</sub>, t/soat</label><input id="pFm" type="number" value="10.5" step="0.1"></div>
-<div><label for="pTR">Normal deb olinadigan boshlang‘ich qism, %</label><input id="pTR" type="number" value="30" min="10" max="90"></div>
-</div>
-<label for="csv">Fayl (.xlsx, .csv)</label><input id="csv" type="file" accept=".xlsx,.csv,.txt,text/csv" style="max-width:520px">
-<div class="btns"><button id="sample" class="sec">Namuna Excel yuklab olish</button><button id="back" class="sec">Simulyatsiyaga qaytish</button></div>
-<p class="msg" id="csvMsg"></p></div>
-</section>
-
-<section class="view" id="v-math">
-<div class="vh"><div><h1>Matematik model</h1><p>Vaqt — daqiqa, oqim — m³/soat (gaz, havo) va t/soat (material), harorat — °C, namlik — %.</p></div></div>
-<div class="sgrid" style="grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr))">
-<div class="card"><h2>1. Gorelka va o‘txona</h2>
-<div class="eq">Q<sub>g</sub> = u<sub>1-2</sub>·Q<sub>g,max</sub>,   Q<sub>a1</sub> = u<sub>1-1</sub>·Q<sub>a1,max</sub>,   Q<sub>a2</sub> = u<sub>1-3</sub>·Q<sub>a2,max</sub>
-λ = Q<sub>a1</sub> / (9,5·Q<sub>g</sub>)
-T<sub>f</sub>* = T<sub>0</sub> + η·Q<sub>g</sub>·H<sub>u</sub>·min(1, λ) / ((Q<sub>g</sub> + Q<sub>a1</sub>)·c<sub>p</sub>),   τ<sub>f</sub>·dT<sub>f</sub>/dt = T<sub>f</sub>* − T<sub>f</sub></div>
-<h2 style="margin-top:14px">2. Quritish agenti (aralashma)</h2>
-<div class="eq">T<sub>d</sub>* = ((Q<sub>g</sub> + Q<sub>a1</sub>)·T<sub>f</sub> + Q<sub>a2</sub>·T<sub>0</sub>) / (Q<sub>g</sub> + Q<sub>a1</sub> + Q<sub>a2</sub>),   τ<sub>d</sub>·dT<sub>d</sub>/dt = T<sub>d</sub>* − T<sub>d</sub></div>
-<h2 style="margin-top:14px">3. Quritish va mahsulot namligi</h2>
-<div class="eq">E = κ·Q<sub>da</sub>·c<sub>a</sub>·(T<sub>d</sub> − T<sub>chiq</sub>) / r        (bug‘latish qobiliyati, t/soat)
-W = F·w<sub>kir</sub>/100,   w* = w<sub>kir</sub>·exp(−β·E / W),   τ<sub>p</sub>·dw/dt = w* − w,   AT02(t) = w(t − t<sub>k</sub>)</div>
-<h2 style="margin-top:14px">4. Bunker va ta’minot</h2>
-<div class="eq">dL/dt = 100·(F<sub>kir</sub> − F) / (60·M<sub>b</sub>),   F = u<sub>M01</sub>·F<sub>max</sub>·k<sub>f</sub>   (normal ishda k<sub>f</sub> = 1; shnek tiqilganda yoki M02 to‘xtaganda k<sub>f</sub> &lt; 1)</div>
-<h2 style="margin-top:14px">5. Boshqaruv va himoya (PLC)</h2>
-<div class="eq">u<sub>1-2</sub>: PI, TT02 → topshiriq;   u<sub>1-1</sub>: FT02 → λ<sub>0</sub>·9,5·FT01;   u<sub>1-3</sub> = const
-TT01 ≥ 1180 °C, TT02 ≥ 400 °C yoki λ ≤ 0,95 ⇒ gorelka o‘chiriladi
-LT01 ≤ 5 % ⇒ M01 to‘xtaydi;   LT01 ≥ 95 % ⇒ konveyer 1 to‘xtaydi;   AT02 ≥ 8 % ⇒ sifat hodisasi</div></div>
-<div class="card"><h2>6. AI: izchillik qoldiqlari</h2>
-<div class="eq">r<sub>T</sub> = (TT02 − T<sub>d</sub>*(TT01, FT01, FT02, FT03)) / 12
-r<sub>G</sub> = (FT01 − u<sub>1-2</sub>·Q<sub>g,max</sub>) / (0,03·Q<sub>g,max</sub>),   r<sub>A</sub> = (FT02 − u<sub>1-1</sub>·Q<sub>a1,max</sub>) / (0,03·Q<sub>a1,max</sub>)
-r<sub>F</sub> = (WT − u<sub>M01</sub>·F<sub>max</sub>) / (0,03·F<sub>max</sub>),   r<sub>M</sub> = (M02 − u<sub>M02</sub>) / 1,5
-r<sub>I</sub> = (WT̄ + M<sub>b</sub>·dL/dt − F<sub>kir,nom</sub>) / 1,   r<sub>W</sub> = (AT01 − w<sub>nom</sub>) / 1</div>
-<h2 style="margin-top:14px">7. Dinamik xavf indeksi</h2>
-<div class="eq"><b>x₁</b> = chegaraga yaqinlik (alarm → 0,5, himoya → 1)
-<b>x₂</b> = clip(1 − τ/T<sub>u</sub>),  τ — hodisagacha vaqt (AT02 uchun model bashorati bo‘yicha)
-<b>x₃</b> = max(Isolation Forest bali, clip((max|r| − 3)/2))
-<b>x₄</b> = clip((max|r| − 3)/4)
-<b>R</b> = max<sub>j</sub>(w₁x₁ⱼ + w₂x₂ⱼ) + w₃x₃ + w₄x₄,   R ≥ R* ketma-ket 3 o‘lchov ⇒ ogohlantirish</div>
-<p class="note">Isolation Forest: 100 daraxt, 256 tanlanma, 30 ta normal ssenariyda qoldiqlar vektori [r<sub>T</sub>, r<sub>G</sub>, r<sub>A</sub>, r<sub>F</sub>, r<sub>M</sub>, r<sub>I</sub>, r<sub>W</sub>] bo‘yicha o‘qitiladi. Sabab tashxisi |r| ≥ 4 qoidalari asosida (ustuvorlik: TT02, gaz, havo, M02, shnek, kelim, namlik).</p>
-<h2 style="margin-top:14px">8. Taxminiy parametrlar</h2>
-<p class="note">Q<sub>g,max</sub> = 400, Q<sub>a1,max</sub> = 4500, Q<sub>a2,max</sub> = 12000 m³/soat; H<sub>u</sub> = 34 000 kJ/m³ (34 MJ/m³); c<sub>p</sub> = 1,45 kJ/(m³·K) (issiq gaz); c<sub>a</sub> = 1,35 kJ/(m³·K) (quritish agenti); r = 2800 kJ/kg (bug‘lanish issiqligi); κ = 0,92; β = 1,88; T<sub>0</sub> = 20 °C; T<sub>chiq</sub> = 120 °C; F<sub>max</sub> = 10,5 t/soat; stexiometrik havo 9,5 m³/m³; τ<sub>f</sub> = 4, τ<sub>d</sub> = 1,5, τ<sub>p</sub> = 6 daq, kechikish t<sub>k</sub> = 3 daq; η = 0,5; F<sub>kir</sub> = 7 t/soat; w<sub>kir</sub> = 18 %; M<sub>b</sub> = 30 t; TT02 topshiriq 350 °C. Barcha qiymatlar taxminiy — real qurilma ma’lumotlari bilan almashtirilishi kerak.</p></div>
-</div></section>
-
-<section class="view" id="v-settings">
-<div class="vh"><div><h1>Sozlamalar</h1><p>Ssenariy, indeks vaznlari va jarayon parametrlari. “Qo‘llash” bosilgach model qayta o‘qitiladi.</p></div></div>
-<div class="sgrid">
-<div class="card"><h2>Ssenariy</h2>
-<div class="row"><label for="sev" style="margin-bottom:0">Nosozlik jiddiyligi</label><span class="val" id="sevv"></span></div><input id="sev" type="range" min="0" max="1" step="0.05" value="0">
-<div class="row"><label for="noise" style="margin-bottom:0">O‘lchash shovqini</label><span class="val" id="noisev"></span></div><input id="noise" type="range" min="0.5" max="3" step="0.25" value="1"></div>
-<div class="card"><h2>Dinamik xavf indeksi</h2>
-<div class="row"><label for="rth" style="margin:0">Ogohlantirish chegarasi R*</label><span class="val" id="rthv"></span></div><input id="rth" type="range" min="0.2" max="0.9" step="0.01" value="0.45">
-<div class="row"><label for="w1" style="margin:8px 0 0">w₁ chegaraga yaqinlik</label><span class="val" id="w1v"></span></div><input id="w1" type="range" min="0" max="1" step="0.05" value="0.20">
-<div class="row"><label for="w2" style="margin:0">w₂ hodisagacha vaqt</label><span class="val" id="w2v"></span></div><input id="w2" type="range" min="0" max="1" step="0.05" value="0.50">
-<div class="row"><label for="w3" style="margin:0">w₃ anomaliya</label><span class="val" id="w3v"></span></div><input id="w3" type="range" min="0" max="1" step="0.05" value="0.15">
-<div class="row"><label for="w4" style="margin:0">w₄ o‘lchovlar izchilligi</label><span class="val" id="w4v"></span></div><input id="w4" type="range" min="0" max="1" step="0.05" value="0.15"></div>
-<div class="card" style="grid-column:1/-1"><h2>Jarayon parametrlari</h2>
-<div class="pgrid">
-<div><label for="pSP">TT02 topshiriq, °C</label><input id="pSP" type="number" value="350" min="150" max="390"></div>
-<div><label for="pFin">Nam material kelimi, t/soat</label><input id="pFin" type="number" value="7" step="0.1" min="0.5" max="15"></div>
-<div><label for="pM01">Shnek M01 tezligi, %</label><input id="pM01" type="number" value="67" min="5" max="100"></div>
-<div><label for="pM02">Aralashtirgich M02 tezligi, %</label><input id="pM02" type="number" value="75" min="5" max="100"></div>
-<div><label for="pU3">Ikkilamchi havo klapani 1-3, %</label><input id="pU3" type="number" value="55" min="0" max="100"></div>
-<div><label for="pWin">Kirish namligi (nominal), %</label><input id="pWin" type="number" value="18" step="0.1" min="1" max="40"></div>
-<div><label for="pMb">Bunker sig‘imi, t</label><input id="pMb" type="number" value="30" min="5" max="200"></div>
-<div><label for="pTh">Indeks ufqi, min</label><input id="pTh" type="number" value="30" min="5" max="120"></div>
-<div><label for="pTresp">Operator javob vaqti, min</label><input id="pTresp" type="number" value="5" min="1" max="60"></div>
-</div>
-<p class="note">Himoya chegaralari: TT01 H/HH 1120/1180 °C, TT02 H/HH 380/400 °C, λ L/LL 1,05/0,95, LT01 L/LL 15/5 % va H/HH 85/95 %, AT02 H/HH 6/8 %. Qiymatlar taxminiy.</p>
-<div class="btns"><button id="apply">Qo‘llash</button><button id="reset" class="sec">Standart qiymatlar</button></div></div>
-</div><div class="card" style="margin-top:14px" id="rvCard"><h2 class="sh">Haqiqiy qiymatlar (parol bilan)</h2>
-<p class="note" style="margin-top:0">Yuqoridagi “Haqiqiy” tanlansa, parol so‘raladi va saqlangan haqiqiy jarayon qiymatlari yuklanadi. Ularni kiritish: “Haqiqiy”ni yoqing, yuqoridagi “Jarayon parametrlari”ga haqiqiy qiymatlarni yozing va pastdagi tugmani bosing. Qiymatlar parol bilan shifrlanib faqat shu qurilmada saqlanadi. “Anonim”da standart (taxminiy) qiymatlar ishlaydi.</p>
-<div class="btns"><button id="rvSave" type="button">Joriy qiymatlarni haqiqiy deb saqlash</button></div>
-<p class="note" id="rvState" role="status"></p><p class="note" id="rvMsg" role="status"></p>
-<h2 class="sh">Parol</h2>
-<div class="pgrid" style="max-width:520px"><div><label for="pwOld">Joriy parol</label><input id="pwOld" type="password" autocomplete="current-password"></div>
-<div></div><div><label for="pwNew">Yangi parol (kamida 8 belgi)</label><input id="pwNew" type="password" autocomplete="new-password"></div>
-<div><label for="pwNew2">Yangi parolni takrorlang</label><input id="pwNew2" type="password" autocomplete="new-password"></div></div>
-<div class="btns"><button id="pwChg" type="button">Parolni yangilash</button><button id="pwReset" type="button" class="sec">Dastlabki holatga qaytarish</button></div>
-<p class="note" id="pwChgMsg" role="status"></p></div>
-<div class="card" style="margin-top:14px" id="knCard"><h2 class="sh">Holat turlari (tahrirlash)</h2>
-<p class="note" style="margin-top:0">Holat nomlarini o‘zgartiring yoki o‘zingizning nomli holatingizni yozing: u tanlangan asosiy model bo‘yicha hisoblanadi.</p>
-<div id="knBox" style="max-width:640px"></div>
-<div class="btns"><button id="knSave" type="button">Nomlarni saqlash</button><button id="knReset" type="button" class="sec">Asl nomlarni tiklash</button></div>
-<h2 class="sh">O‘z holatingizni qo‘shish</h2>
-<div class="pgrid" style="max-width:640px"><div><label for="kcName">Yangi holat nomi</label><input id="kcName" type="text" maxlength="80"></div><div><label for="kcBase">Asosiy model</label><select id="kcBase"></select></div></div>
-<div class="btns"><button id="kcAdd" type="button">Qo‘shish</button></div>
-<ul id="kcList" style="padding-left:18px;font-size:13px"></ul>
-<p class="note" id="knMsg" role="status"></p></div>
-</section>
 </div></main></div>
 <script src="js/vault.js"></script>
-<script src="js/dryer-vault-blob.js"></script>
-<script src="js/dryer-config.js"></script>
-<script src="js/dryer-sim.js"></script>
-<script src="js/dryer-sprites.js"></script>
-<script src="js/dryer-app.js"></script>
-<script src="js/scene3d.bundle.js"></script>
-<script src="js/dryer-scene3d-view.js"></script>
-<script src="js/report.js"></script>
-<script src="js/dryer-pdf-quiz.js"></script>
-<script src="js/dryer-journal.js"></script>
-<script src="js/dryer-mn3d.js"></script>
-<script src="js/mobile.js"></script>
-<script src="js/dryer-i18n.js"></script>
+<script src="js/xlsx.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/three.bundle.js"></script>
 <script src="js/amine-refs.js"></script>
 <script src="js/amine-network.js"></script>
 <script src="js/amine-model.js"></script>
@@ -231,4 +53,5 @@ r<sub>I</sub> = (WT̄ + M<sub>b</sub>·dL/dt − F<sub>kir,nom</sub>) / 1,   r<s
 <script src="js/amine-ai.js"></script>
 <script src="js/amine-data.js"></script>
 <script src="js/amine-dcs.js"></script>
-<script src="js/amine-scene3d.js"></script><style>#plantMode{display:none!important}</style><script src="js/boot.js"></script></body></html>
+<script src="js/amine-scene3d.js"></script>
+<script src="js/boot.js"></script></body></html>
