@@ -1,6 +1,6 @@
 const test = require('node:test'), assert = require('node:assert');
-const { load } = require('./load');
-const W = load(['amine-network.js', 'amine-chem.js', 'amine-model.js']);
+const { load, MODEL } = require('./load');
+const W = load(MODEL);
 const settle = (o, sec = 900) => { const c = new W.AmineChem(); for (let i = 0; i < sec * 10; i++) c.step(o, .1); return c; };
 const NOM = { g: 100, lean: 100, Ti: 30.92, fault: 'normal' };
 

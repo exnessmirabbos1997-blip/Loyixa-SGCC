@@ -8,5 +8,5 @@ function load(files) {
   for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, 'js', f), 'utf8'), ctx, { filename: 'js/' + f });
   return win;
 }
-const MODEL = ['amine-network.js', 'amine-chem.js', 'amine-model.js'];
+const MODEL = ['amine-network.js', 'amine-chem.js', 'amine-sis.js', 'amine-model.js'];
 module.exports = { load, MODEL, root, newModel: s => new (load(MODEL).AmineModel)(s) };

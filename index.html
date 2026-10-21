@@ -22,6 +22,7 @@
 <button class="nav" data-view="mimic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="12" rx="2"/><rect x="14" y="5" width="7" height="12" rx="2"/><path d="M10 11h4M6 17v3h12v-3"/></svg>Mnemosxema</button><button class="nav" data-view="3d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>3D ko‘rinish</button>
 <button class="nav" data-view="trends"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>Trendlar</button>
 <button class="nav" data-view="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3L12 3z"/><path d="M12 10v4M12 17v.5"/></svg>Diagnostika</button>
+<button class="nav" data-view="sis"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>SIS / ESD blokirovka</button>
 <button class="nav" data-view="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M8 3h8l4 4v14H4V3z"/></svg>Hodisani qayta ko‘rish</button>
 <button class="nav" data-view="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>Hodisalar jurnali</button>
 <button class="nav" data-view="batch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg>Ssenariylarni sinash</button>
@@ -34,7 +35,7 @@
 <div class="topbar"><span class="crumb">DA-1701 › <b id="crumb">Umumiy ko‘rinish</b></span>
 <span class="live"><i></i><span>O‘quv simulyatsiyasi · Offline</span></span>
 <select class="tbtn" id="lang" aria-label="Til / Язык / Language"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select><button class="tbtn" id="theme" aria-label="Kun / tun rejimi">☾ / ☀</button></div>
-<div class="mnav" id="mnav"><button class="mn" data-view="overview">Umumiy ko‘rinish</button><button class="mn" data-view="mimic">Mnemosxema</button><button class="mn" data-view="3d">3D ko‘rinish</button><button class="mn" data-view="trends">Trendlar</button><button class="mn" data-view="ai">Diagnostika</button><button class="mn" data-view="review">Hodisani qayta ko‘rish</button><button class="mn" data-view="journal">Hodisalar jurnali</button><button class="mn" data-view="batch">Ssenariylarni sinash</button><button class="mn" data-view="data">Ma’lumotlar va P&amp;ID</button><button class="mn" data-view="math">Matematik model</button><button class="mn" data-view="settings">Boshqaruv va sozlamalar</button></div>
+<div class="mnav" id="mnav"><button class="mn" data-view="overview">Umumiy ko‘rinish</button><button class="mn" data-view="mimic">Mnemosxema</button><button class="mn" data-view="3d">3D ko‘rinish</button><button class="mn" data-view="trends">Trendlar</button><button class="mn" data-view="ai">Diagnostika</button><button class="mn" data-view="sis">SIS / ESD</button><button class="mn" data-view="review">Hodisani qayta ko‘rish</button><button class="mn" data-view="journal">Hodisalar jurnali</button><button class="mn" data-view="batch">Ssenariylarni sinash</button><button class="mn" data-view="data">Ma’lumotlar va P&amp;ID</button><button class="mn" data-view="math">Matematik model</button><button class="mn" data-view="settings">Boshqaruv va sozlamalar</button></div>
 
 </div></main></div>
 <script src="js/vault.js"></script>
@@ -44,6 +45,7 @@
 <script src="js/amine-refs.js"></script>
 <script src="js/amine-network.js"></script>
 <script src="js/amine-chem.js"></script>
+<script src="js/amine-sis.js"></script>
 <script src="js/amine-model.js"></script>
 <script src="js/amine-archive.js"></script>
 <script src="js/amine-process.js"></script>
@@ -51,6 +53,7 @@
 <script src="js/amine-mimic.js"></script>
 <script src="js/amine-app.js"></script>
 <script src="js/amine-chem-ui.js"></script>
+<script src="js/amine-sis-ui.js"></script>
 <script src="js/amine-tags.js"></script>
 <script src="js/amine-ai.js"></script>
 <script src="js/amine-data.js"></script>
