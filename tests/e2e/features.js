@@ -29,6 +29,8 @@ const fails=[];const ok=(c,m)=>{if(!c){fails.push(m);console.log('  ✗',m)}else
  // 3D majmua
  await p.click('.nav[data-view="3d"]');await p.waitForTimeout(6000);await p.click('[data-camera="complex"]');await p.waitForTimeout(3000);
  ok(await p.evaluate(()=>!!window.__PS?.inst?.ready&&window.__PS.inst.viewId==='complex'),'3D: majmua kamerasi');
+ // ko'rinadigan versiya package.json bilan mos
+ ok(await p.evaluate(v=>document.getElementById('appVer').textContent.includes('v'+v),require('../../package.json').version),'Versiya yorlig‘i package.json bilan mos');
  // Mashq va avariyalar: ssenariy (yong'in → ESD-1), ob-havo, test, amaliy mashq, tarjima
  await p.evaluate(()=>window.AmineTrain.start('fire'));await p.waitForFunction(()=>window.AmineApp.model.sis.esdActive(),null,{timeout:120000});
  ok(await p.evaluate(()=>window.__PS.inst.fx.fire===1&&window.AmineApp.state().sis.esd),'Avariya: yong‘in → ESD-1 avtomatik');
