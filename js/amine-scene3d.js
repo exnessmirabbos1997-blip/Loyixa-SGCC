@@ -37,21 +37,21 @@ class PlantScene{
   this.buildGround();this.buildCoolerFrame();this.buildCoolers();this.buildTower();this.buildSeparator();this.buildPipeRack();this.buildPiping();this.buildInstruments();this.buildSigns();this.buildStation();this.buildBackground();this.buildProcess();this.flush();
   this.setLook('dusk');this.setCamera('all',false);this.resize();this.ready=true;this.setCut(true);this.bindPointer();
   new ResizeObserver(()=>this.resize()).observe(host);
-  const bar=host.closest('.a-card')?.querySelector('.a-toolbar');if(bar&&!document.getElementById('aTod')){const b=document.createElement('button');b.className='asec';b.id='aTod';b.title='Kechki / kunduzgi yoritish';b.onclick=()=>this.setLook(this.look==='dusk'?'day':'dusk');const sp=bar.querySelector('.spacer');bar.insertBefore(b,sp?sp.nextSibling:bar.firstChild);b.textContent='☾ Kechki'}
+  const bar=host.closest('.a-card')?.querySelector('.a-toolbar');if(bar&&!document.getElementById('aTod')){const b=document.createElement('button');b.className='asec';b.id='aTod';b.title='Kechki / kunduzgi yoritish';b.onclick=()=>{const o=['day','dusk','night'];this.setLook(o[(o.indexOf(this.look)+1)%3])};const sp=bar.querySelector('.spacer');bar.insertBefore(b,sp?sp.nextSibling:bar.firstChild);b.textContent='☾ Kechki'}
  }catch(e){console.error('3D:',e);const er=host.querySelector('.a3-error');if(er){er.hidden=false;er.textContent='WebGL ishga tushmadi. Mnemosxema barcha signallar bilan ishlashda davom etadi.'}}}
  // ---------------------------------------------------------------- materials
  makeMaterials(){const E=1.15,M=(o)=>new T.MeshStandardMaterial(o);const br=PS.brushedTex();
   this.m={
    steel:M({color:0xdde2e4,metalness:.92,roughness:.3,envMapIntensity:E,map:br}),
-   shell:M({color:0xd9dfe2,metalness:.9,roughness:.26,envMapIntensity:E,map:br,side:T.FrontSide}),
-   inner:M({color:0x56707c,metalness:.6,roughness:.5,side:T.BackSide}),
+   shell:M({color:0xeef2f5,metalness:.92,roughness:.21,envMapIntensity:1.45,map:br,side:T.FrontSide}),
+   inner:M({color:0x5d7684,metalness:.5,roughness:.5,side:T.BackSide,emissive:0x2a3c46}),
    clad:M({color:0xffffff,metalness:.8,roughness:.36,envMapIntensity:E,map:PS.claddingTex()}),
    pipe:M({color:0xc9d0d4,metalness:.88,roughness:.34,envMapIntensity:E}),
    dark:M({color:0x363f48,metalness:.7,roughness:.5}),
    frame:M({color:0x56677a,metalness:.55,roughness:.55,envMapIntensity:.8}),
    frame2:M({color:0x3e4c5b,metalness:.6,roughness:.5}),
    yellow:M({color:0xe6b01c,metalness:.15,roughness:.5}),
-   green:M({color:0x2f9c3e,metalness:.35,roughness:.4}),
+   green:M({color:0x2f9c3e,metalness:.35,roughness:.4}),wheel:M({color:0x1e7a3c,metalness:.4,roughness:.38}),
    red:M({color:0xb23a3a,metalness:.3,roughness:.45}),
    black:M({color:0x0b0d10,metalness:.3,roughness:.5}),
    rubber:M({color:0x15191d,roughness:.8}),
@@ -103,13 +103,20 @@ window.__PS.PlantScene=PlantScene;
 (()=>{'use strict';
 const PS=window.__PS;if(!PS)return;const {T,rnd}=PS,PI=Math.PI,V3=T.Vector3,P=PS.PlantScene.prototype;
 const CUT0=2.2,CUTL=3.7; // kesim: ko'rinadigan burchak
-function profile(r,y0,y1,hb,n=14){const pts=[];for(let k=0;k<=n;k++){const t=k/n*PI/2;pts.push(new T.Vector2(Math.max(.0001,r*Math.sin(t)),y0-hb*Math.cos(t)))}for(let k=1;k<=n;k++){const t=k/n*PI/2;pts.push(new T.Vector2(Math.max(.0001,r*Math.cos(t)),y1+hb*Math.sin(t)))}return pts}
+function profile(r,y0,y1,hb,n=14,extra=[]){const pts=[];for(let k=0;k<=n;k++){const t=k/n*PI/2;pts.push(new T.Vector2(Math.max(.0001,r*Math.sin(t)),y0-hb*Math.cos(t)))}for(const y of [...extra].sort((a,b)=>a-b))if(y>y0&&y<y1)pts.push(new T.Vector2(r,y));for(let k=1;k<=n;k++){const t=k/n*PI/2;pts.push(new T.Vector2(Math.max(.0001,r*Math.cos(t)),y1+hb*Math.sin(t)))}return pts}
 // ---------------------------------------------------------------- vertikal idish
 P.vessel=function(o){const {id,eq,x,z,r,y0,y1,hb}=o,m=this.m;const pts=profile(r,y0,y1,hb);
- const mk=(cut)=>new T.LatheGeometry(pts,72,cut?CUT0:0,cut?CUTL:PI*2);
+ // kuzatuv oynalari (o.win: [az0, az1, yA, yB]) — qobiqdan shu sektor uchburchaklari olib tashlanadi, ichki tarelkalar va suyuqlik ko'rinadi
+ const win=o.win||[],wpts=win.length?profile(r,y0,y1,hb,14,win.flatMap(w=>[w[2],w[3]])):pts;
+ const cutWin=g=>{const P=g.attributes.position,I=g.index.array,keep=[];for(let i=0;i<I.length;i+=3){let cx=0,cy=0,cz=0;for(let k=0;k<3;k++){cx+=P.getX(I[i+k]);cy+=P.getY(I[i+k]);cz+=P.getZ(I[i+k])}cx/=3;cy/=3;cz/=3;let a=Math.atan2(cz,cx);if(a<0)a+=PI*2;
+   if(!win.some(w=>a>w[0]&&a<w[1]&&cy>w[2]&&cy<w[3]))keep.push(I[i],I[i+1],I[i+2])}g.setIndex(keep);return g};
+ const mk=(cut)=>cut?new T.LatheGeometry(pts,72,CUT0,CUTL):win.length?cutWin(new T.LatheGeometry(wpts,72)):new T.LatheGeometry(pts,72);
  const outer=new T.Mesh(mk(false),m.shell);outer.position.set(x,0,z);outer.castShadow=true;outer.receiveShadow=true;outer.userData.eq=eq;this.scene.add(outer);this.picks.push(outer);
  const inner=new T.Mesh(mk(false),m.inner);inner.position.set(x,0,z);inner.receiveShadow=true;this.scene.add(inner);inner.userData.eq=eq;this.picks.push(inner);
  this.shells.push({kind:'v',outer,inner,mk});
+ for(const [a0,a1,ya,yb] of win){const gl=new T.Mesh(new T.CylinderGeometry(r+.01,r+.01,yb-ya,24,1,true,PI/2-a1,a1-a0),m.glass);gl.position.set(x,(ya+yb)/2,z);gl.renderOrder=3;this.scene.add(gl);
+  for(const a of [a0,a1]){this.cylAB([x+Math.cos(a)*(r+.03),ya-.08,z+Math.sin(a)*(r+.03)],[x+Math.cos(a)*(r+.03),yb+.08,z+Math.sin(a)*(r+.03)],.06,m.steel,8);for(let y=ya;y<=yb;y+=.35)this.sphere(x+Math.cos(a)*(r+.09),y,z+Math.sin(a)*(r+.09),.025,m.bolt,5)}
+  for(const y of [ya,yb])this.torus(x,y,z,r+.03,.06,m.steel,'y',a1-a0,16,-a0)}
  // payvand choklari
  const n=Math.floor((y1-y0)/2.6);for(let i=1;i<=n;i++)this.torus(x,y0+i*(y1-y0)/(n+1),z,r+.012,.014,m.dark,'y');
  this.torus(x,y0,z,r+.012,.02,m.dark,'y');this.torus(x,y1,z,r+.012,.02,m.dark,'y');
@@ -150,7 +157,7 @@ P.ladderV=function(cx,cz,r,az,y0,y1){const m=this.m,rad=r+.42,px=cx+Math.cos(az)
 // ---------------------------------------------------------------- yuqori sifatli tablichka (plastina)
 P.plate=function(text,x,y,z,ry,w=1.5){const h=w*80/256;const mat=new T.MeshStandardMaterial({map:PS.plateTex(text),roughness:.55});const mesh=new T.Mesh(new T.PlaneGeometry(w,h),mat);mesh.position.set(x,y,z);mesh.rotation.y=ry;mesh.castShadow=false;this.scene.add(mesh);const back=new T.Mesh(new T.BoxGeometry(w+.1,h+.1,.03),this.m.dark);back.position.set(x-Math.sin(ry)*.02,y,z-Math.cos(ry)*.02);back.rotation.y=ry;this.scene.add(back)};
 // ---------------------------------------------------------------- DA-1701
-P.buildTower=function(){const m=this.m,x=5,z=0,r=1.65,y0=2.3,y1=17.5,hb=.9;this.tower=this.vessel({id:'tower',eq:'tower',x,z,r,y0,y1,hb});
+P.buildTower=function(){const m=this.m,x=5,z=0,r=1.65,y0=2.3,y1=17.5,hb=.9;this.tower=this.vessel({id:'tower',eq:'tower',x,z,r,y0,y1,hb,win:[[.85,1.45,9.55,14.15],[1.2,1.75,2.7,4.6]]});
  // platformalar va zina (zina azimuti 0.55 rad)
  const AZ=.55;for(const y of [4.8,9.0,14.3])this.platform(x,z,y,r,AZ);this.ladderV(x,z,r+1.1,AZ,.4,14.3+.0);
  // 2-qism zinasi (platformalar orasi) — shu azimutda, platforma ichidan o'tadi
@@ -161,13 +168,13 @@ P.buildTower=function(){const m=this.m,x=5,z=0,r=1.65,y0=2.3,y1=17.5,hb=.9;this.
  this.nozzle(x-r,4.2,z,'X',.5,.3);this.nozzle(x,12.1,z-r,'Z',.55,.17);this.nozzle(x,15.7,z-r,'Z',.55,.13);this.nozzle(x+r,13.5,z,'x',.5,.12);this.nozzle(x,y0-hb*.88,z,'y',-.0,.25);
  this.nozzle(x,y1+hb,z,'y',.5,.32);
  // manway'lar
- this.manway(x,z,r,1.6,6.2,.36);this.manway(x,z,r,2.3,11.4,.36);this.manway(x,z,r,2.9,15.4,.36);this.manway(x,z,r,1.2,3.2,.34);
+ this.manway(x,z,r,1.6,6.2,.36);this.manway(x,z,r,2.3,11.4,.36);this.manway(x,z,r,2.9,15.4,.36);this.manway(x,z,r,2.6,3.2,.34);
  // sath ko'rsatkichlari (bridle) — LC17003 (sump), LC17002 (wash)
  this.sight(x,z,r,1.05,2.6,5.6,'L');this.sight(x,z,r,-.5-0.25,13.0,14.0,'W',true);
  // nom plastinasi
  this.plate('DA-1701',x+Math.cos(.95)*(r+.015),7.0,z+Math.sin(.95)*(r+.015),PI/2-.95,1.6);
  // ichki konstruksiya (kesimda ko'rinadi): tarelkalar, quyi taqsimlagich, yuvish bo'limi, tomchi ushlagich
- const tray=new T.MeshStandardMaterial({color:0x8aa0ae,metalness:.7,roughness:.4,map:PS.noiseTex(128,128,'#9aa8b2',60,12,[2,2],(c,W,H,R)=>{c.fillStyle='rgba(20,28,34,.8)';for(let i=0;i<260;i++){c.beginPath();c.arc(R()*W,R()*H,2.2,0,PI*2);c.fill()}}),side:T.DoubleSide});
+ const tray=new T.MeshStandardMaterial({color:0x8aa0ae,metalness:.7,roughness:.4,emissive:0x34444e,map:PS.noiseTex(128,128,'#9aa8b2',60,12,[2,2],(c,W,H,R)=>{c.fillStyle='rgba(20,28,34,.8)';for(let i=0;i<260;i++){c.beginPath();c.arc(R()*W,R()*H,2.2,0,PI*2);c.fill()}}),side:T.DoubleSide});
  for(const y of [5.2,7.6,10,12.5,14.0]){const g=new T.CylinderGeometry(r-.07,r-.07,.08,48);g.translate(x,y,z);const mm=new T.Mesh(g,tray);mm.receiveShadow=true;mm.castShadow=true;mm.userData.cutOnly=true;this.scene.add(mm);this.inside=(this.inside||[]);this.inside.push(mm);
   const wr=new T.BoxGeometry(.06,.34,1.5);wr.translate(x+(y%2?-1:1)*(r-.55),y+.2,z);this.S(m.dark).push(wr);for(let i=0;i<10;i++){const a=i/10*PI*2;this.cylAB([x+Math.cos(a)*(r-.1),y,z+Math.sin(a)*(r-.1)],[x+Math.cos(a)*(r-.5),y,z+Math.sin(a)*(r-.5)],.03,m.dark,5)}}
  for(const y of [12.05,15.65]){this.torus(x,y,z,1.2,.055,m.steel,'y');for(const zz of [-.7,0,.7]){this.cylAB([x-1.0,y,z+zz],[x+1.0,y,z+zz],.055,m.steel,8);for(const xx of [-.8,-.3,.3,.8])this.cylAB([x+xx,y,z+zz],[x+xx,y-.16,z+zz],.03,m.dark,5)}}
@@ -175,9 +182,12 @@ P.buildTower=function(){const m=this.m,x=5,z=0,r=1.65,y0=2.3,y1=17.5,hb=.9;this.
  const mesh=new T.Mesh(new T.CylinderGeometry(r-.15,r-.15,.28,40),new T.MeshStandardMaterial({color:0x9aa7ae,metalness:.6,roughness:.5,map:PS.canvasTex(64,64,(c,W,H)=>{c.fillStyle='#8c979e';c.fillRect(0,0,W,H);c.strokeStyle='#4b565d';c.lineWidth=1;for(let i=0;i<W;i+=5){c.beginPath();c.moveTo(i,0);c.lineTo(i,H);c.stroke();c.beginPath();c.moveTo(0,i);c.lineTo(W,i);c.stroke()}},[4,4])}));mesh.position.set(x,16.95,z);this.scene.add(mesh);this.inside.push(mesh);
  // suyuqlik: sump (L) va yuvish (W)
  this.addLiquid('L',x,z,r-.08,2.3,3.4,0xc29a3d);this.addLiquid('W',x,z,r-.12,13.2,.7,0x8a79b8);
+ // oyna orqasida tarelkadan tarelkaga oqayotgan amin oqimlari (tezligi to'yinmagan amin sarfiga bog'liq)
+ {const n=200,g=new T.BoxGeometry(.016,.18,.016),mt=new T.MeshBasicMaterial({color:0xdcf0fa,transparent:true,opacity:.7,depthWrite:false});const im=new T.InstancedMesh(g,mt,n);im.instanceMatrix.setUsage(T.DynamicDrawUsage);im.frustumCulled=false;this.scene.add(im);
+  const R2=rnd(9),d=[];for(let i=0;i<n;i++){const a=.65+R2()*1.0,rr=.2+R2()*1.25,sg=R2()<.45?[13.15,12.6]:[12.0,10.1];d.push({x:x+Math.cos(a)*rr,z:z+Math.sin(a)*rr,top:sg[0],span:sg[0]-sg[1],ph:R2()})}this.drops={im,d,m:new T.Matrix4()}}
 };
 // ---------------------------------------------------------------- FA-1702
-P.buildSeparator=function(){const m=this.m,x=-2.5,z=2,r=1.05,y0=2.1,y1=7.2,hb=.55;this.sep=this.vessel({id:'sep',eq:'sep',x,z,r,y0,y1,hb});
+P.buildSeparator=function(){const m=this.m,x=-2.5,z=2,r=1.05,y0=2.1,y1=7.2,hb=.55;this.sep=this.vessel({id:'sep',eq:'sep',x,z,r,y0,y1,hb,win:[[.25,.8,2.5,5.6]]});
  const AZ=.7;this.platform(x,z,6.5,r,AZ,.9,.7);this.ladderV(x,z,r+.9,AZ,.4,6.5);this.ladderV(x,z,r,AZ,6.5,7.9);
  this.nozzle(x-r,4.4,z,'X',.55,.3);this.nozzle(x,y1+hb,z,'y',.5,.2);this.nozzle(x,y0-hb*.9,z,'y',-.0,.16);this.nozzle(x+r,3.1,z,'x',.45,.1);
  this.manway(x,z,r,1.7,4.2,.3);this.manway(x,z,r,2.4,5.6,.3);this.sight(x,z,r,1.15,2.4,4.6,'K');this.plate('FA-1702',x+Math.cos(1.0)*(r+.015),3.6,z+Math.sin(1.0)*(r+.015),PI/2-1.0,1.3);
@@ -320,7 +330,7 @@ P.valve=function(p,axis,key,r=.2,o={}){const m=this.m,dir={x:[1,0,0],y:[0,1,0],z
   this.disc(x,ay,z,.3,.3,m.blue,'y',20);const dome=new T.SphereGeometry(.3,18,8,0,PI*2,0,PI/2);dome.translate(x,ay+.15,z);this.S(m.blue).push(dome);this.box(x+.36,ay-.05,z,.2,.26,.2,m.black);this.cylAB([x+.3,ay-.05,z],[x+.2,ay-.05,z],.02,m.steel,4);this.torus(x,ay,z,.3,.014,m.dark,'y')}
  else{const wy=y+.98;this.cylAB([x-.12,y+.4,z],[x-.12,wy-.04,z],.025,m.steel,5);this.cylAB([x+.12,y+.4,z],[x+.12,wy-.04,z],.025,m.steel,5);
   const tr=new T.TorusGeometry(.26,.028,6,18);tr.rotateX(PI/2);const sa=new T.CylinderGeometry(.018,.018,.52,4);sa.rotateZ(PI/2);const sb=new T.CylinderGeometry(.018,.018,.52,4);sb.rotateX(PI/2);const wg=mergeList([tr,sa,sb]);
-  if(o.stat){wg.translate(x,wy,z);this.S(m.red).push(wg)}else{wheel=new T.Mesh(wg,m.red);wheel.position.set(x,wy,z);wheel.castShadow=true;this.scene.add(wheel)}}
+  if(o.stat){wg.translate(x,wy,z);this.S(m.wheel).push(wg)}else{wheel=new T.Mesh(wg,m.wheel);wheel.position.set(x,wy,z);wheel.castShadow=true;this.scene.add(wheel)}}
  if(!o.stat)this.valves[key]={m:mat,wheel}};
 P.hv=function(p,axis,r=.12){this.valve(p,axis,null,r,{stat:true})};
 // ---------------------------------------------------------------- saqlash klapani (PSV)
@@ -440,7 +450,9 @@ const LOOK={
  dusk:{sky:[[0,'#0a1230'],[.2,'#17285a'],[.34,'#3d4682'],[.43,'#a65d86'],[.475,'#f08a5a'],[.5,'#fbbd7c'],[.508,'#4a4256'],[.6,'#2a2f40'],[1,'#1a1f2b']],fog:0x5a4a64,fn:70,ff:240,
   env:[[0,'#1e2f62'],[.38,'#6f6a98'],[.48,'#ffb070'],[.52,'#4a4150'],[1,'#151a26']],hemi:[0x7f95d6,0x4a3a32,1.05],sun:[0xffa060,2.7,[-42,13,28]],fill:[0x7f9cff,.75],expo:1.12,lamps:true,stars:true},
  day:{sky:[[0,'#2f6cb0'],[.35,'#7fb2e2'],[.47,'#d6e8f5'],[.5,'#f2f4ee'],[.508,'#8a949a'],[.6,'#68767e'],[1,'#4a5760']],fog:0xaebfca,fn:80,ff:260,
-  env:[[0,'#4c78a6'],[.42,'#d6e6f2'],[.5,'#fff6de'],[.54,'#8c8b84'],[1,'#31394a']],hemi:[0xd8eaff,0x6c675c,1.25],sun:[0xffecd2,2.6,[-18,34,22]],fill:[0xbcdcff,.85],expo:1.2,lamps:false,stars:false}};
+  env:[[0,'#4c78a6'],[.42,'#d6e6f2'],[.5,'#fff6de'],[.54,'#8c8b84'],[1,'#31394a']],hemi:[0xd8eaff,0x6c675c,1.25],sun:[0xffecd2,2.6,[-18,34,22]],fill:[0xbcdcff,.85],expo:1.2,lamps:false,stars:false},
+ night:{sky:[[0,'#02050d'],[.3,'#06122a'],[.45,'#0f2248'],[.5,'#1c2e55'],[.508,'#0b0f18'],[.6,'#080b12'],[1,'#05070b']],fog:0x0c1424,fn:70,ff:240,
+  env:[[0,'#0a1020'],[.35,'#1e2a48'],[.48,'#b0682c'],[.52,'#6a4420'],[1,'#140d08']],hemi:[0x4a5c90,0x7a4a20,1.05],sun:[0x9ab2ff,.6,[30,40,-20]],fill:[0x3a56a8,.35],expo:1.2,lamps:true,stars:true}};
 const grad=(w,h,stops)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,h);for(const [o,col] of stops)g.addColorStop(o,col);x.fillStyle=g;x.fillRect(0,0,w,h);return c};
 P.setLook=function(k){const L=LOOK[k];this.look=k;
  const c=this.skyCtx.canvas,g=this.skyCtx.createLinearGradient(0,0,0,512);for(const [o,col] of L.sky)g.addColorStop(o,col);this.skyCtx.fillStyle=g;this.skyCtx.fillRect(0,0,4,512);this.skyTex.needsUpdate=true;
@@ -449,11 +461,11 @@ P.setLook=function(k){const L=LOOK[k];this.look=k;
  this.hemi.color.setHex(L.hemi[0]);this.hemi.groundColor.setHex(L.hemi[1]);this.hemi.intensity=L.hemi[2];
  this.sun.color.setHex(L.sun[0]);this.sun.intensity=L.sun[1];this.sun.position.set(...L.sun[2]);this.sun.target.position.set(0,5,0);this.scene.add(this.sun.target);this.fill.color.setHex(L.fill[0]);this.fill.intensity=L.fill[1];
  this.renderer.toneMappingExposure=L.expo;this.lampLights.forEach((l,i)=>{l.intensity=L.lamps?(i<3?85:45):0});for(const o of this.lampObjs)o.visible=L.lamps;
- this.renderer.shadowMap.needsUpdate=true;const b=document.getElementById('aTod');if(b)b.textContent=k==='dusk'?'☾ Kechki':'☀ Kunduzgi'};
+ this.renderer.shadowMap.needsUpdate=true;const b=document.getElementById('aTod');if(b)b.textContent=k==='night'?'★ Tungi':k==='dusk'?'☾ Kechki':'☀ Kunduzgi'};
 P.setCamera=function(id,smooth=true){if(!this.camera||!this.controls)return;this.viewId=id;
  const views={all:[[31,19,37],[-1,8.5,0]],tower:[[15,12.5,24],[5,10.3,0]],sep:[[-1,6.6,14.5],[-2.5,4.9,2]],cool:[[-19,8,15.5],[-11,5.2,0]],top:[[0,72,.1],[0,0,0]],station:[[8,7,23],[-.5,1.8,11.1]]};const v=views[id]||views.all;
  if(smooth){this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...v[0]),t1:new V3(...v[1]),u:0}}else{this.camera.position.set(...v[0]);this.controls.target.set(...v[1]);this.controls.update()}};
-P.setCut=function(on){if(!this.ready)return;this.cut=!!on;for(const s of this.shells){s.outer.geometry.dispose();s.outer.geometry=s.mk(on);s.inner.geometry.dispose();s.inner.geometry=s.mk(on)}for(const o of this.inside||[])o.visible=!!on;this.renderer.shadowMap.needsUpdate=true};
+P.setCut=function(on){if(!this.ready)return;this.cut=!!on;for(const s of this.shells){s.outer.geometry.dispose();s.outer.geometry=s.mk(on);s.inner.geometry.dispose();s.inner.geometry=s.mk(on)}for(const o of this.inside||[])o.visible=true;this.renderer.shadowMap.needsUpdate=true};
 P.setQuality=function(q){if(!this.ready)return;this.quality=q;this.renderer.setPixelRatio(q==='low'?1:Math.min(devicePixelRatio,1.6));this.renderer.shadowMap.enabled=q!=='low';this.renderer.shadowMap.needsUpdate=true;this.resize()};
 P.resize=function(){if(!this.renderer||!this.camera)return;const w=this.host.clientWidth,h=this.host.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix()};
 P.screenshot=function(){return this.renderer?.domElement.toDataURL('image/png')};

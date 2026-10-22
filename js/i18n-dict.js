@@ -2711,11 +2711,6 @@ window.I18N_DICT=[
 "● — the valve closes when the cause activates. Red row — tripped. RESET is accepted only after the cause clears (latch)."
 ],
 [
-"☾ Kechki",
-"☾ Вечер",
-"☾ Dusk"
-],
-[
 "⛶ To‘liq ekran",
 "⛶ Во весь экран",
 "⛶ Full screen"
@@ -3504,5 +3499,20 @@ window.I18N_DICT=[
 "DCS XONASI",
 "ОПЕРАТОРНАЯ DCS",
 "DCS ROOM"
+],
+[
+"★ Tungi",
+"★ Ночь",
+"★ Night"
+],
+[
+"☾ Kechki",
+"☾ Вечер",
+"☾ Dusk"
+],
+[
+"☀ Kunduzgi",
+"☀ День",
+"☀ Day"
 ]
 ];

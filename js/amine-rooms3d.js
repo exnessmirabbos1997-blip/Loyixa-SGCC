@@ -36,7 +36,7 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
   shirt:M({color:0xaac4dd,roughness:.8}),paper:M({color:0xf4f4ef,roughness:.9}),pot:M({color:0x9ea3a6,roughness:.6}),leaf:M({color:0x2f6a2e,roughness:.85}),
   orange:M({color:0xe8661c,roughness:.7}),dark:M({color:0x15191d,roughness:.7}),cable:M({color:0x2563c9,roughness:.6}),cableY:M({color:0xd9b21c,roughness:.6}),
   yellow:M({color:0xf0b51c,metalness:.2,roughness:.45}),valve:M({color:0x5b6670,metalness:.7,roughness:.4}),ceil:new T.MeshBasicMaterial({color:0xfff8ea}),
-  cabIn:['dcs','sis','term'].map((k,i)=>M({map:cabTex(k,i),roughness:.6})),door:M({map:doorTex(),metalness:.3,roughness:.5})};
+  cabIn:['dcs','sis','term'].map((k,i)=>M({map:cabTex(k,i),roughness:.6})),door:M({map:doorTex(),metalness:.3,roughness:.5}),hl:[0x39d06a,0xf2b233,0xd83a3a].map(c=>new T.MeshBasicMaterial({color:c}))};
  this.mr=mm;
  // ---- inson: ish kiyimi (to'q ko'k + kulrang yelka, nur qaytaruvchi chiziqlar), o'tirgan / turgan, daftar yoki ko'rsatish ----
  const worker=(x,z,ry,o={})=>{const sit=!!o.sit,cs=Math.cos(ry),sn=Math.sin(ry),L=(px,py,pz)=>[x+px*cs+pz*sn,py,z-px*sn+pz*cs],
@@ -50,6 +50,7 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
     const mid=[(s*.25+elb[0])/2,(sh+elb[1])/2+.04,(elb[2])/2];this.cylAB(L(mid[0],mid[1]-.02,mid[2]),L(mid[0],mid[1]+.02,mid[2]),.058,mm.refl,7)};
   if(o.arms==='desk'){for(const s of [-1,1])ar(s,[s*.26,sh-.27,-.08],[s*.17,sh-.3,-.38])}
   else if(o.book){ar(-1,[-.26,sh-.28,-.04],[-.08,sh-.24,-.3]);ar(1,[.26,sh-.28,-.04],[.08,sh-.2,-.3]);put(new T.BoxGeometry(.24,.025,.32),mm.paper,0,sh-.2,-.3);put(new T.BoxGeometry(.25,.028,.33),mm.navy,0,sh-.215,-.3)}
+  else if(o.tablet){ar(-1,[-.26,sh-.28,-.04],[-.1,sh-.22,-.32]);ar(1,[.26,sh-.3,0],[.27,sh-.58,.02]);put(new T.BoxGeometry(.26,.018,.19),mm.dark,-.06,sh-.2,-.34)}
   else if(o.point){ar(-1,[-.27,sh-.3,0],[-.27,sh-.58,.02]);ar(1,[.3,sh-.12,-.22],[.36,sh+.02,-.55])}
   else{for(const s of [-1,1])ar(s,[s*.27,sh-.3,0],[s*.27,sh-.58,.02])}
   this.cylY(...L(0,0,0).filter((_,i)=>i!==1),sh,sh+.09,.05,mm.skin,8);const hd=L(0,sh+.21,0);this.put(new T.SphereGeometry(.115,14,10),mm.skin,hd[0],hd[1],hd[2],0,ry,0,1,1.12,1);
@@ -61,13 +62,13 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
  // ---- bino: yengil metall qoplama, shisha old tomon, ichida shift plitalari va chiroqlar ----
  const building=(B,stripe,sign,o={})=>{const {x,z,w,d,h}=B,fz=z+d/2,bz=z-d/2,lx=x-w/2,rx=x+w/2,dz=o.doorZ??z+1.6;
   this.box(x,.15,z,w+1.2,.3,d+1.2,m.conc);
-  this.box(x,h/2+.3,bz,w,h,.18,mm.clad);this.box(lx,h/2+.3,z,.18,h,d,mm.clad);this.box(rx,h/2+.3,(bz+dz-.6)/2,.18,h,dz-.6-bz,mm.clad);this.box(rx,h/2+.3,(dz+.6+fz)/2,.18,h,fz-dz-.6,mm.clad);this.box(rx,h-.1,dz,.18,.8,1.2,mm.clad);
+  this.box(x,h/2+.3,bz,w,h,.18,mm.clad);if(o.sideGlass){this.box(lx,.75,z,.18,.9,d,mm.clad);this.box(lx,h-.1,z,.18,.8,d,mm.clad);const sg=new T.Mesh(new T.BoxGeometry(.05,h-1.7,d-.2),m.glass);sg.position.set(lx,(1.2+h-.5)/2,z);sg.renderOrder=2;this.scene.add(sg);const nz=Math.round(d/1.6);for(let i=0;i<=nz;i++)this.box(lx,(1.2+h-.5)/2,bz+.1+i*(d-.2)/nz,.12,h-1.68,.08,m.dark);this.box(lx,1.2,z,.14,.08,d,m.dark);this.box(lx,h-.5,z,.14,.08,d,m.dark)}else this.box(lx,h/2+.3,z,.18,h,d,mm.clad);this.box(rx,h/2+.3,(bz+dz-.6)/2,.18,h,dz-.6-bz,mm.clad);this.box(rx,h/2+.3,(dz+.6+fz)/2,.18,h,fz-dz-.6,mm.clad);this.box(rx,h-.1,dz,.18,.8,1.2,mm.clad);
   this.box(rx+.02,1.35,dz,.06,2.1,1,m.dark);this.box(rx+.4,2.55,dz,.9,.08,1.3,m.frame);
   this.box(x,.75,fz,w,.9,.18,mm.clad);this.box(x,h-.1,fz,w,.8,.18,mm.clad);
   const gl=new T.Mesh(new T.BoxGeometry(w-.2,h-1.6,.05),m.glass);gl.position.set(x,(1.2+h-.5)/2,fz);gl.renderOrder=2;this.scene.add(gl);
   const n=Math.round(w/1.6);for(let i=0;i<=n;i++){const px=lx+.1+i*(w-.2)/n;this.box(px,(1.2+h-.5)/2,fz,.08,h-1.68,.12,m.dark)}this.box(x,1.2,fz,w,.08,.14,m.dark);this.box(x,h-.5,fz,w,.08,.14,m.dark);
   this.box(x,h-.42,fz+.1,w+.05,.16,.06,stripe);this.box(x,h+.26,fz+.1,w+.05,.06,.06,stripe);
-  this.box(x,h/2+.3,bz+.1,w-.3,h,.02,mm.wallIn);this.box(lx+.1,h/2+.3,z,.02,h,d-.3,mm.wallIn);this.box(rx-.1,h/2+.3,z,.02,h,d-.3,mm.wallIn);
+  this.box(x,h/2+.3,bz+.1,w-.3,h,.02,mm.wallIn);if(!o.sideGlass)this.box(lx+.1,h/2+.3,z,.02,h,d-.3,mm.wallIn);this.box(rx-.1,h/2+.3,z,.02,h,d-.3,mm.wallIn);
   const fm=M({map:floorTex(false),roughness:.6,metalness:.05});fm.map.repeat.set((w-.2)/2.4,(d-.2)/2.4);const fl=new T.Mesh(new T.PlaneGeometry(w-.2,d-.2),fm);fl.rotation.x=-PI/2;fl.position.set(x,.33,z);fl.receiveShadow=true;this.scene.add(fl);
   const roof=new T.Group();const rm=new T.Mesh(new T.BoxGeometry(w+.5,.25,d+.5),mm.clad);rm.position.set(x,h+.42,z);roof.add(rm);
   for(const [ax,az] of [[x-w/4,z],[x+w/4,z-1]]){const ac=new T.Mesh(new T.BoxGeometry(1.4,.7,1),mm.cab);ac.position.set(ax,h+.9,az);roof.add(ac);const f=new T.Mesh(new T.CylinderGeometry(.35,.35,.05,16),m.dark);f.position.set(ax,h+1.26,az);roof.add(f)}
@@ -80,27 +81,30 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
   return {fz,bz,lx,rx}};
  // ================= DCS OPERATOR XONASI =================
  const dl=[];for(let i=0;i<4;i++)for(const k of [-1,1])dl.push([DCS.x-6+i*4,DCS.z+k*2.2,1.2,.6]);
- const D=building(DCS,mm.blue,'DCS XONASI',{lights:dl,lamps:[[DCS.x-4,DCS.z],[DCS.x+4,DCS.z]]});
+ const D=building(DCS,mm.blue,'DCS XONASI',{lights:dl,lamps:[[DCS.x-4,DCS.z],[DCS.x+4,DCS.z]],sideGlass:true});
  // video-devor: 3×2 panel (55"), ingichka ramkalar
  const vw=screen(1536,512,(c,s)=>{c.save();c.scale(1.5,1.6);this.drawVideoWall(c,s);c.restore()});const vwm=new T.Mesh(new T.PlaneGeometry(7.2,2.4),new T.MeshBasicMaterial({map:vw.tex,toneMapped:false}));vwm.position.set(DCS.x,2.35,D.bz+.14);this.scene.add(vwm);RM.screens.push(vw);
  this.box(DCS.x,2.35,D.bz+.105,7.36,2.56,.04,mm.dark);this.box(DCS.x,2.35,D.bz+.145,.03,2.4,.01,mm.dark);for(const k of [-1,1]){this.box(DCS.x+k*1.2,2.35,D.bz+.145,.03,2.4,.01,mm.dark)}this.box(DCS.x,2.35,D.bz+.145,7.2,.03,.01,mm.dark);
  const sc15=f=>(c,s)=>{c.save();c.scale(1.5,1.5);f.call(this,c,s);c.restore()};const mons={p0:screen(384,240,(c,s)=>this.drawProc(c,s,0)),p1:screen(384,240,(c,s)=>this.drawProc(c,s,1)),trend:screen(384,240,sc15(this.drawTrend)),alarm:screen(384,240,sc15(this.drawAlarms)),sis:screen(384,240,sc15(this.drawSisMon))};
  RM.screens.push(mons.p0,mons.p1,mons.trend,mons.alarm,mons.sis);
- const kinds=[['alarm','p0','p1','trend'],['p1','p0','trend','sis'],['trend','p1','p0','alarm']];
- for(let i=0;i<3;i++){const cx=DCS.x-5.2+i*5.2,dz=D.bz+3.1;this.box(cx,.78,dz,3.3,.05,.9,mm.deskTop);this.box(cx,.45,dz-.12,3.2,.62,.6,mm.desk);this.box(cx,.45,dz+.3,3.2,.62,.03,mm.desk);
-  kinds[i].forEach((k,j)=>{const a=(j-1.5)*.16,mx=cx+(j-1.5)*.7,mz=dz-.22+Math.abs(j-1.5)*.06;monitor(mx,1.17,mz,-a,.64,.38,mons[k].tex)});
-  monitor(cx-.35,1.62,dz-.3,0,.64,.38,mons[i===1?'sis':'p0'].tex);monitor(cx+.35,1.62,dz-.3,0,.64,.38,mons[i===2?'alarm':'p1'].tex);
-  this.box(cx-.1,.815,dz+.15,.46,.02,.16,mm.dark);this.box(cx+.35,.815,dz+.17,.07,.03,.11,mm.dark);this.box(cx+.7,.81,dz+.12,.22,.01,.3,mm.paper);
+ // yaxlit uzun operator pulti: 4 ish o'rni, har birida 4 + 2 monitor, oq tortmali tumbalar
+ const kinds=[['alarm','p0','p1','trend'],['p1','p0','trend','sis'],['trend','p1','p0','alarm'],['sis','p0','p1','trend']],dz=D.bz+3.1;
+ this.box(DCS.x,.78,dz,14.4,.05,.9,mm.deskTop);this.box(DCS.x,.45,dz-.14,14.2,.62,.55,mm.desk);this.box(DCS.x,.8,dz+.46,14.4,.03,.04,mm.dark);
+ for(let i=0;i<4;i++){const cx=DCS.x-5.25+i*3.5;
+  kinds[i].forEach((k,j)=>monitor(cx+(j-1.5)*.68,1.17,dz-.2,0,.64,.38,mons[k].tex));monitor(cx-.34,1.62,dz-.28,0,.64,.38,mons[i%2?'sis':'p0'].tex);monitor(cx+.34,1.62,dz-.28,0,.64,.38,mons[i%2?'p1':'alarm'].tex);
+  this.box(cx-.1,.815,dz+.15,.46,.02,.16,mm.dark);this.box(cx+.35,.815,dz+.17,.07,.03,.11,mm.dark);this.box(cx+.75,.81,dz+.12,.22,.01,.3,mm.paper);this.box(cx+1.3,.45,dz+.05,.45,.62,.55,mm.cab);for(const yy of [.32,.52,.7])this.box(cx+1.3,yy,dz+.33,.3,.02,.01,mm.dark);
   chair(cx,dz+.85,0);worker(cx,dz+.8,0,{sit:true,arms:'desk'})}
+ // ko'k LED aksent chiziqlari (orqa devor va video-devor atrofida)
+ {const led=new T.MeshBasicMaterial({color:0x3d9bff,toneMapped:false});for(const [px,py,pw,ph] of [[DCS.x,DCS.h-.05,DCS.w-.4,.04],[DCS.x-3.85,2.35,.04,2.7],[DCS.x+3.85,2.35,.04,2.7]])this.put(new T.BoxGeometry(pw,ph,.02),led,px,py,D.bz+.13)}
  // smena boshlig'i (daftar bilan) va katta muhandis (ekranni ko'rsatmoqda)
  worker(DCS.x+3.5,D.bz+5.1,PI*.1,{book:true});worker(DCS.x+2.3,D.bz+4.9,-PI*.12,{point:true});
- this.plate('DCS · OPERATOR XONASI',D.lx+.13,2.95,DCS.z+1,PI/2,3.2);{const ck=[D.lx+.14,2.95,DCS.z-2.4];this.disc(...ck,.28,.04,mm.paper,'x',24);this.torus(...ck,.28,.025,mm.dark,'x',PI*2,24);this.box(ck[0]+.03,ck[1]+.08,ck[2],.01,.17,.02,mm.dark);this.box(ck[0]+.03,ck[1],ck[2]+.06,.01,.02,.13,mm.dark)}
+ this.plate('DCS · OPERATOR XONASI',DCS.x-6.1,3.05,D.bz+.13,0,2.8);{const ck=[DCS.x+6.1,3.05,D.bz+.13];this.disc(...ck,.28,.04,mm.paper,'z',24);this.torus(...ck,.28,.025,mm.dark,'z',PI*2,24);this.box(ck[0],ck[1]+.08,ck[2]+.03,.02,.17,.01,mm.dark);this.box(ck[0]+.06,ck[1],ck[2]+.03,.13,.02,.01,mm.dark)}
  // supervayzer stoli, printer/server shkafi, o'simliklar
  const sx=DCS.x+.2,sz=D.bz+6.6;this.box(sx,.78,sz,2.4,.05,.8,mm.deskTop);this.box(sx,.45,sz,2.3,.62,.6,mm.desk);monitor(sx-.4,1.17,sz-.2,0,.64,.38,mons.trend.tex);monitor(sx+.4,1.17,sz-.2,0,.64,.38,mons.alarm.tex);chair(sx,sz+.7,0);
  this.box(D.lx+.5,1.2,D.bz+1,.8,1.8,.6,mm.cab);this.box(D.lx+.82,1.3,D.bz+1,.02,1.2,.5,mm.cabDark);plant(D.lx+.6,D.fz-.8);plant(D.rx-.6,D.bz+.7);plant(D.lx+.6,D.bz+2.4);
  // ================= ISR-1: SIS / ESD va I/O shkaflari xonasi =================
  const il=[];for(const ax of [-2.15,2.15])for(let k=0;k<4;k++)il.push([SISB.x+ax,SISB.z-3.6+k*2.3,.25,1.6]);
- const Q=building(SISB,mm.red,'ISR-1 · SIS XONASI',{lights:il,lamps:[[SISB.x,SISB.z-1]],doorZ:SISB.z+SISB.d/2-1.4});
+ const Q=building(SISB,mm.red,'ISR-1 · SIS XONASI',{lights:il,lamps:[[SISB.x,SISB.z-3],[SISB.x,SISB.z+2.2]],doorZ:SISB.z+SISB.d/2-1.4});
  // teshikli pol (yo'laklar)
  for(const ax of [-2.15,2.15]){const pf=new T.Mesh(new T.PlaneGeometry(1.2,7.8),mm.perf);pf.rotation.x=-PI/2;pf.position.set(SISB.x+ax,.335,Q.bz+4.4);mm.perf.map.repeat.set(2,13);this.scene.add(pf)}
  // shkaf qatorlari: A (chap devor), B|C (markazda, orqama-orqa), D (o'ng devor)
@@ -109,9 +113,10 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
   const open=k.open,lv=k.live;let mat=mm.cabIn[k.v];if(lv){const [name,kind,idx]=lv;const sc=screen(192,384,(c,s)=>this.drawCabinet(c,s,kind,idx,name));RM.screens.push(sc);mat=new T.MeshBasicMaterial({map:sc.tex,toneMapped:false})}
   if(open){const pl=new T.Mesh(new T.PlaneGeometry(.68,1.86),mat);pl.position.set(cx+face*.205,1.38,cz);pl.rotation.y=ry;this.scene.add(pl);
    if(k.door){const hz=cz-.38,dg=new T.BoxGeometry(.025,1.9,.74);dg.translate(0,0,.37);const dr=new T.Mesh(dg,mm.cab);dr.position.set(fx,1.38,hz);dr.rotation.y=face>0?1.75:-1.75;dr.castShadow=true;this.scene.add(dr)}}
-  else{const pl=new T.Mesh(new T.PlaneGeometry(.74,1.9),mm.door);pl.position.set(fx+face*.005,1.38,cz);pl.rotation.y=ry;this.scene.add(pl)}};
+  else{const pl=new T.Mesh(new T.PlaneGeometry(.74,1.9),mm.door);pl.position.set(fx+face*.005,1.38,cz);pl.rotation.y=ry;this.scene.add(pl);
+   if(k.hmi){const hm=new T.Mesh(new T.PlaneGeometry(.24,.17),new T.MeshBasicMaterial({map:mons[k.hmi].tex,toneMapped:false}));hm.position.set(fx+face*.012,1.78,cz-.12);hm.rotation.y=ry;this.scene.add(hm);this.box(fx+face*.006,1.78,cz-.12,.012,.21,.28,mm.dark);[0x39d06a,0xf2b233,0xd83a3a].forEach((c,j)=>this.sphere(fx+face*.015,1.52,cz-.2+j*.08,.022,mm.hl[j],8))}}};
  const rows=[[-3.95,1],[-.35,-1],[.35,1],[3.95,-1]];let ci=0;
- rows.forEach(([ox,face],r)=>{for(let i=0;i<9;i++){const cz=Q.bz+.85+i*.8;const k={v:(r+i)%3===1?1:(r+i)%3===2?2:(r<2?1:0),open:(i+r)%3!==1,door:(i+r)%4===0};
+ rows.forEach(([ox,face],r)=>{for(let i=0;i<9;i++){const cz=Q.bz+.85+i*.8;const k={v:(r+i)%3===1?1:(r+i)%3===2?2:(r<2?1:0),open:(i+r)%3!==1,door:(i+r)%4===0,hmi:(i+r)%2===0?(r%2?'p1':'p0'):null};
    if(r===1&&i>=2&&i<7&&li<live.length){k.live=live[li++];k.open=true}if(r===0||r===3){if(i===8)continue}ci++;cabinet(SISB.x+ox,cz,face,k)}});
  // kabel lotoklari (ko'k kabel dastalari) va yoritgichlar ustida
  for(const ax of [-3.4,-1,1,3.4]){const tx0=SISB.x+ax,y=SISB.h-.35;this.box(tx0,y,Q.bz+4.2,.5,.03,8,mm.cab);for(const s of [-1,1])this.box(tx0+s*.25,y+.05,Q.bz+4.2,.02,.1,8,mm.cab);for(let k=0;k<5;k++)this.cylAB([tx0-.18+k*.09,y+.07,Q.bz+.3],[tx0-.18+k*.09,y+.07,Q.bz+8.1],.035,k===2?mm.cableY:mm.cable,6);
@@ -128,7 +133,7 @@ P.buildRooms=function(){const m=this.m,R=PS.rnd(57);this.rooms={roofs:[],screens
  const es=SISB.x+2.0,ez2=Q.fz-1.75;this.box(es,.78,ez2,2.4,.05,.8,mm.deskTop);this.box(es,.45,ez2-.1,2.3,.62,.55,mm.desk);
  for(const [j,k] of [[-1,'p1'],[0,'p0'],[1,'trend']])monitor(es+j*.7,1.17,ez2-.22+Math.abs(j)*.06,-j*.16,.64,.38,mons[k].tex);chair(es,ez2+.85,0);
  this.plate('MUHANDISLIK STANSIYASI',Q.rx-.13,2.5,ez2,-PI/2,1.9);plant(Q.lx+.5,Q.fz-.6);
- worker(SISB.x-2.3,Q.bz+4.1,-PI/2,{book:true});worker(es,ez2+.8,0,{sit:true,arms:'desk'});
+ worker(SISB.x-2.75,Q.bz+5.0,PI/2,{tablet:true});worker(SISB.x-2.95,Q.bz+4.25,PI/2-.2,{point:true});worker(es,ez2+.8,0,{sit:true,arms:'desk'});
  // tomdagi SIS mayoqchasi
  const bmat=new T.MeshStandardMaterial({color:0x661010,emissive:0x000000});const bk=new T.Mesh(new T.CylinderGeometry(.16,.16,.32,14),bmat);bk.position.set(SISB.x+3,SISB.h+.75,SISB.z+2.6);RM.roofs[1].add(bk);RM.beacon=bmat;
  // ================= KABEL TOKCHALARI va signal oqimlari =================
@@ -214,7 +219,7 @@ P.drawCabinet=function(c,s,kind,idx,name){const W=192,H=384,z=s.sis||{trip:[],by
 const _bb=P.buildBackground,_render=P.render,_cut=P.setCut,_look=P.setLook,_paint=P.paintLabel,_cam=P.setCamera;
 P.buildBackground=function(){_bb.call(this);try{this.buildRooms()}catch(e){console.error('3D xonalar:',e)}};
 P.setCut=function(on){_cut.call(this,on)};// xona tomlari doim yopiq
-P.setLook=function(k){_look.call(this,k);for(const l of this.rooms?.lamps||[])l.intensity=k==='dusk'?16:10};
+P.setLook=function(k){_look.call(this,k);for(const l of this.rooms?.lamps||[])l.intensity=k==='night'?26:k==='dusk'?18:10};
 // ichki kameralar: DCS — old o'ng burchakdan pultlar va video-devorga; ISR-1 — eshik oldidan shkaflar yo'lagi bo'ylab
 const ROOMCAM={dcsroom:[[DCS.x+7.4,1.85,DCS.z+DCS.d/2-.7],[DCS.x-3,1.3,DCS.z-DCS.d/2+1.6]],sisroom:[[SISB.x-2.15,1.68,SISB.z+SISB.d/2-.45],[SISB.x-2.15,1.35,SISB.z-SISB.d/2+.3]]};
 P.setCamera=function(id,smooth=true){if(ROOMCAM[id]&&this.camera){this.viewId=id;const v=ROOMCAM[id];if(smooth)this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...v[0]),t1:new V3(...v[1]),u:0};else{this.camera.position.set(...v[0]);this.controls.target.set(...v[1])}this.applyRange?.();return}
