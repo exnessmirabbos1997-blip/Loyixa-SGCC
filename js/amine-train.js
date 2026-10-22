@@ -49,7 +49,7 @@ const SC={
   tick(c){const t=c.t;if(t>3)c.once('det','Olov detektorlari (UV/IR, 2oo3) yong‘inni tasdiqladi.','warn');if(t>5&&!c.f.esd){c.f.esd=1;c.m.sisESD();c.log('ESD-1: barcha XV yopildi — qurilma izolyatsiya qilindi, yonilg‘i manbai uzildi.','ok')}
    if(t>6&&!c.f.call){c.f.call=1;fx({truck:1});c.log('Yong‘in xizmati chaqirildi — o‘t o‘chirish mashinasi yo‘lda.','info')}
    const F=S3()?.fx;if(F?.arrived&&!c.f.w){c.f.w=t;fx({water:1});c.log('Mashina yetib keldi — suv bilan sovitish va o‘chirish boshlandi.','info')}
-   if(c.f.w){const k=Math.max(0,1-(t-c.f.w)/28);fx({fire:k});if(k<=0)c.once('out','Yong‘in o‘chirildi. Qurilma ESD holatida — tekshiruvdan keyin SIS RESET.','ok')}},
+   if(c.f.w){const k=Math.max(0,1-(t-c.f.w)/28);fx({fire:k});if(k<=0){c.once('out','Yong‘in o‘chirildi. Qurilma ESD holatida — tekshiruvdan keyin SIS RESET.','ok');c.f.outT=c.f.outT||t;if(t-c.f.outT>6)fx({water:0})}}},
   actions:[{label:'Suvni to‘xtatish va mashinani qaytarish',run(c){fx({water:0,truck:0});c.log('O‘t o‘chirish mashinasi qaytdi.','info')}},{label:'SIS RESET',reset:true}]},
  press:{title:'Chiqish yopildi — bosim oshishi',sis:'SIF-05 (PAHH-17012, 2oo3, 4200 kPa) → ESD-1, PSV (4370 kPag) ochilmaydi',desc:'FCI17001 chiqish klapani yopilib qoldi: kirish bosimi oshadi. SIS PSV ochilishidan oldin ESD-1 bilan qurilmani izolyatsiya qiladi, gaz mash’alga yo‘naltiriladi.',
   start(c){c.m.setFault('outBlocked');setSpeed(10);setCut(false);cam([[20,15,16],[5,13,0]]);c.log('FCI17001 chiqish klapani yopilib qoldi — PI17012 bosimi oshmoqda.','warn')},
@@ -89,10 +89,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-tour]');if
 let demo=null;
 const DEMO=[
  {wait:c=>c.t>5,enter(c){cam('all');say('Demo: <b>SIF-01 himoyasi</b>. Qurilma normal ishlamoqda: DA-1701 sathi LC17003 bilan 45 % da ushlanadi.')}},
- {wait:c=>c.s.L<=8||(c.s.sis?.trip||[]).includes('SIF-01'),enter(c){c.m.setFault('stuckOpen');setCut(false);cam([[15,5,10],[5,3.6,0]]);say('<b>Nosozlik:</b> LC17003 klapani 100 % ochiq qotib qoldi — absorber pastki qismi tez bo‘shamoqda (kub oynasi).')}},
- {wait:c=>(c.s.sis?.trip||[]).includes('SIF-01')&&c.dt>7,enter(c){cam([[24,3.5,9],[19.5,1,4.4]]);say('<b>SIF-01 trip:</b> LT17054 A/B/C (2oo3) sath juda pastligini tasdiqladi — XV17003 fail-close yopildi. Gaz FA-1705 ga o‘tmadi.')}},
+ {wait:c=>c.s.L<=8||(c.s.sis?.trip||[]).includes('SIF-01')||c.dt>40,enter(c){c.m.setFault('stuckOpen');setCut(false);cam([[15,5,10],[5,3.6,0]]);say('<b>Nosozlik:</b> LC17003 klapani 100 % ochiq qotib qoldi — absorber pastki qismi tez bo‘shamoqda (kub oynasi).')}},
+ {wait:c=>(c.s.sis?.trip||[]).includes('SIF-01')&&c.dt>7||c.dt>45,enter(c){cam([[24,3.5,9],[19.5,1,4.4]]);say('<b>SIF-01 trip:</b> LT17054 A/B/C (2oo3) sath juda pastligini tasdiqladi — XV17003 fail-close yopildi. Gaz FA-1705 ga o‘tmadi.')}},
  {wait:c=>c.dt>8,enter(c){cam('dcsroom');say('<b>DCS:</b> operator SIS trip va HH alarmni ko‘radi. Blow-by hisoblagichi: {0} s — himoya ishladi. Klapan ta’mirlanmoqda.',f1(c.s.sis?.blowby||0));c.m.setFault('normal')}},
- {wait:c=>c.s.L>(c.m.settings.lowLow+6)&&c.dt>4,enter(c){cam('sisroom');say('<b>ISR-1:</b> TMR kontrollerlar trip holatini latch bilan ushlab turibdi. Sabab yo‘qolishini kutamiz…')}},
+ {wait:c=>c.s.L>(c.m.settings.lowLow+6)&&c.dt>4||c.dt>45,enter(c){cam('sisroom');say('<b>ISR-1:</b> TMR kontrollerlar trip holatini latch bilan ushlab turibdi. Sabab yo‘qolishini kutamiz…')}},
  {wait:c=>c.dt>7,enter(c){const r=c.m.sisReset();cam('all');setCut(true);say(r.still?.length?'RESET rad etildi: sabab hali bor.':'<b>SIS RESET</b> qabul qilindi — XV17003 ochildi, qurilma normal ishga qaytdi. Demo tugadi.')}},
  {wait:c=>c.dt>8,enter(){stopDemo()}}];
 const say=(h,...a)=>cap(tx(T(h,...a))+'<div style="margin-top:8px;text-align:right"><button class="asec" data-demo="stop">'+T('✕ Demoni to‘xtatish')+'</button></div>');
@@ -101,7 +101,7 @@ function demoCtx(){const n=performance.now();return{s:App.state(),m:M(),t:(n-dem
 function stopDemo(){if(!demo)return;demo=null;restoreSpeed();setCut(true);cap(null);M().setFault('normal')}
 setInterval(()=>{if(!demo)return;const c=demoCtx(),st=DEMO[demo.i];if(st.wait(c)&&demo.i<DEMO.length-1){demo.i++;demo.s0=performance.now();DEMO[demo.i].enter(demoCtx())}},500);
 document.addEventListener('click',e=>{if(e.target.closest('[data-demo="stop"]'))stopDemo()});
-function stopAll(){stopScenario();stopTour();stopDemo()}
+function stopAll(){stopScenario();stopTour();stopDemo();if(ex)endEx()}
 // ---------------------------------------------------------------- bilim testi
 const QZ=[
  ['DA-1701 qurilmasining asosiy vazifasi nima?',['Tabiiy gazni amin eritmasi bilan CO₂ va H₂S dan tozalash','Gazni namlikdan quritish','Kondensatni barqarorlashtirish','Gazni kompressorda siqish']],
@@ -168,7 +168,7 @@ panel.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)retu
 // 3D paneliga: ekskursiya va ovoz tugmalari
 let t3=null;const bar=document.querySelector('#aSceneCard .a-toolbar');if(bar){const t=document.createElement('button');t.className='asec';t.textContent=T('🎥 Ekskursiya');t.dataset.noi18n='1';t.onclick=()=>tour?stopTour():startTour();bar.appendChild(t);t3=t;
  const s=document.createElement('button');s.className='asec trSound';s.onclick=()=>Snd.set(!Snd.on);bar.appendChild(s)}
-Snd.set(false);if(store.get('sound',false))document.addEventListener('pointerdown',function f(){Snd.set(true);document.removeEventListener('pointerdown',f)},{once:true});
+const wantSound=store.get('sound',false);Snd.set(false);if(wantSound)document.addEventListener('pointerdown',function f(){Snd.set(true)},{once:true});
 $('fxCap')?.setAttribute('data-noi18n','1');drawQuiz();drawEx();
 window.addEventListener('langchange',()=>{if(t3)t3.textContent=T('🎥 Ekskursiya');panel.innerHTML=panelHTML();drawQuiz();drawEx();drawRun();if(run)capRun();if(tour)tourShow();Snd.set(Snd.on)});
 window.AmineTrain={start:startScenario,stop:stopAll,tour:startTour,demo:startDemo,quiz:startQuiz,exercise:startEx,scenarios:Object.keys(SC),sound:Snd};

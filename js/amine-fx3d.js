@@ -58,7 +58,7 @@ P.buildFx=function(){const m=this.m,sc=this.scene;this.fx={fire:0,leak:0,foam:0,
  const pk=pickup();sc.add(pk);F.pick={g:pk,u:0};
  // effekt tizimlari
  const flame=tex('flame',()=>softTex(255,170,70)),smoke=tex('smoke',()=>softTex(70,70,72)),white=tex('white',()=>softTex(240,246,250)),amber=tex('amber',()=>softTex(220,170,60));
- F.pFire=new Parts(sc,700,{map:flame,size:2.2,color:0xffa040,add:true,drag:1.2,rise:4});F.pSmoke=new Parts(sc,600,{map:smoke,size:7,color:0x3a3a3c,opacity:.55,drag:.6,rise:1.6});
+ F.pFire=new Parts(sc,700,{map:flame,size:2.2,color:0xffa040,add:true,drag:1.2,rise:4});F.pSmoke=new Parts(sc,600,{map:smoke,size:6,color:0x5e5e60,opacity:.36,drag:.6,rise:1.6});
  F.pLeak=new Parts(sc,900,{map:amber,size:.42,color:0xf0c860,grav:9.8,opacity:.95});F.pFoam=new Parts(sc,500,{map:white,size:.45,color:0xffffff,opacity:.85,drag:2,rise:.6});
  F.pFlare=new Parts(sc,500,{map:flame,size:14,color:0xff8a30,add:true,drag:.8,rise:8});F.pPsv=new Parts(sc,400,{map:white,size:2.2,color:0xffffff,opacity:.6,drag:.9,rise:1});
  F.pWater=new Parts(sc,700,{map:white,size:.35,color:0xcfe8ff,grav:9.8,opacity:.75});
@@ -77,16 +77,18 @@ P.buildFx=function(){const m=this.m,sc=this.scene;this.fx={fire:0,leak:0,foam:0,
 // ---- ob-havo ----
 P.setWeather=function(w){const F=this.fx;if(!F)return;F.weather=w;F.rain.visible=w==='rain';F.snow.visible=w==='snow';
  for(const o of F.mats){o.mt.color.copy(o.c);o.mt.roughness=o.r;if(w==='rain'){o.mt.color.multiplyScalar(.62);o.mt.roughness=Math.min(o.r,.35)}else if(w==='snow'){o.mt.color.lerp(new T.Color(0xf4f6f8),.85)}}
- if(this.scene.fog&&this.fogBase){const k=w==='clear'?1:w==='rain'?.55:.6;this.scene.fog.far=this.fogBase[1]*k;this.scene.fog.near=this.fogBase[0]*k}
+ this.applyRange?.();
  if(this.clouds){this.clouds.material.opacity=w==='clear'?(this.look!=='day'?.8:.9):1;this.clouds.material.color.setHex(w==='clear'?(this.look==='day'?0xffffff:0xf0a27a):0x9aa3ad)}
  if(this.sun)this.sun.intensity=(this._sunBase??(this._sunBase=this.sun.intensity))*(w==='clear'?1:.45);
  const b=document.getElementById('fxWeather');if(b)b.textContent=w==='rain'?'🌧 Yomg‘ir':w==='snow'?'❄ Qor':'☀ Ochiq'};
 const _look=P.setLook;P.setLook=function(k){_look.call(this,k);this._sunBase=this.sun?.intensity;if(this.fx&&this.fx.weather!=='clear')this.setWeather(this.fx.weather)};
+// ob-havo tumani: kamera oralig'i (yaqin / majmua) o'zgarganda ham saqlanadi
+const _ar=P.applyRange;if(_ar)P.applyRange=function(){_ar.call(this);const w=this.fx?.weather;if(w&&w!=='clear'&&this.scene?.fog){const k=w==='rain'?.55:.6;this.scene.fog.near*=k;this.scene.fog.far*=k}};
 // ---- kamera parvozi (ekskursiya va ssenariylar uchun) ----
 P.flyTo=function(eye,target,far){if(!this.camera)return;this.viewId=far?'ethylene':'tour';this.applyRange?.();this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...eye),t1:new V3(...target),u:0}};
 // ---- har kadrda: effektlarni silliq yaqinlashtirish, zarrachalarni chiqarish, odamlar va texnikani harakatlantirish ----
 const _render=P.render;
-P.render=function(s,dt){const F=this.fx;if(F&&this.ready){dt=Math.min(dt||0,.1);F.t+=dt;const t=F.t,c=F.cur,ap=(k,tau)=>{c[k]+=(F[k]-c[k])*(1-Math.exp(-dt/tau))};
+P.render=function(s,dt){const F=this.fx;if(F&&this.ready){F.rawDt=dt||0;dt=Math.min(dt||0,.1);F.t+=dt;const t=F.t,c=F.cur,ap=(k,tau)=>{c[k]+=(F[k]-c[k])*(1-Math.exp(-dt/tau))};
   ap('fire',3);ap('leak',1);ap('foam',4);ap('flare',2);ap('psv',1);ap('water',1.5);
   // yong'in: alanga + tutun + miltillovchi yorug'lik
   F.pFire.step(dt,c.fire*260,()=>[FIRE[0]+rr(-1.3,1.3),FIRE[1]+rr(0,.6),FIRE[2]+rr(-1,1),rr(-.4,.4),rr(2.5,5.5),rr(-.4,.4),rr(.5,1.1)]);
@@ -102,7 +104,7 @@ P.render=function(s,dt){const F=this.fx;if(F&&this.ready){dt=Math.min(dt||0,.1);
   // PSV / bosim tushirish: absorber tepasidan oq oqim
   F.pPsv.step(dt,c.psv*120,()=>[5,20.6,0,rr(-.6,.6),rr(9,14),rr(-.6,.6),rr(.8,1.6)]);
   // o't o'chirish mashinasi: yo'l bo'ylab kelish, mayoqchalar, suv purkash
-  const ft=F.ftruck;if(F.truck>0){ft.g.visible=true;F.tu=Math.min(1,F.tu+dt/18)}else{F.tu=Math.max(0,F.tu-dt/18);if(F.tu===0)ft.g.visible=false}
+  const ft=F.ftruck;const dtv=Math.min(F.rawDt||dt,.25);if(F.truck>0){ft.g.visible=true;F.tu=Math.min(1,F.tu+dtv/18)}else{F.tu=Math.max(0,F.tu-dtv/18);if(F.tu===0)ft.g.visible=false}
   if(ft.g.visible){const pth=F.tpath,L=[Math.hypot(pth[1][0]-pth[0][0],pth[1][2]-pth[0][2]),Math.hypot(pth[2][0]-pth[1][0],pth[2][2]-pth[1][2])],d=F.tu*(L[0]+L[1]),k=d<L[0]?0:1,u=k?(d-L[0])/L[1]:d/L[0],a=pth[k],b=pth[k+1];
    ft.g.position.set(a[0]+(b[0]-a[0])*u,0,a[2]+(b[2]-a[2])*u);ft.g.rotation.y=Math.atan2(b[0]-a[0],b[2]-a[2]);const bl=Math.sin(t*12)>0;ft.lb[0].visible=bl;ft.lb[1].visible=!bl;F.arrived=F.tu>=1}else F.arrived=false;
   if(c.water>.02&&ft.g.visible){const o=ft.nozzle.clone().applyMatrix4(ft.g.matrixWorld),dir=new V3(FIRE[0]-o.x,0,FIRE[2]-o.z),dist=dir.length();dir.normalize();const vh=Math.min(11,dist*.95);
@@ -126,5 +128,5 @@ if(bar&&!document.getElementById('fxWeather')){const b=document.createElement('b
 const card=document.getElementById('aSceneCard');
 if(card&&!document.getElementById('fxCap')){const c=document.createElement('div');c.id='fxCap';c.setAttribute('role','status');c.style.cssText='position:absolute;left:50%;bottom:86px;transform:translateX(-50%);max-width:min(860px,92%);background:#0c1c2ee6;color:#eaf4fc;border:1px solid #54758e;border-radius:10px;padding:10px 16px;font:14px/1.45 Segoe UI,Arial;display:none;z-index:5;box-shadow:0 6px 24px #0006';
  if(getComputedStyle(card).position==='static')card.style.position='relative';card.appendChild(c)}
-window.AmineFx={caption(html){const c=document.getElementById('fxCap');if(!c)return;if(!html){c.style.display='none';return}c.innerHTML=html;c.style.display='block'}};
+window.AmineFx={caption(html){const c=document.getElementById('fxCap');if(!c)return;if(!html){c.style.display='none';c.innerHTML='';return}c.innerHTML=html;c.style.display='block'}};
 })();
