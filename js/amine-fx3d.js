@@ -84,11 +84,15 @@ P.setWeather=function(w){const F=this.fx;if(!F)return;F.weather=w;F.rain.visible
 const _look=P.setLook;P.setLook=function(k){_look.call(this,k);this._sunBase=this.sun?.intensity;if(this.fx&&this.fx.weather!=='clear')this.setWeather(this.fx.weather)};
 // ob-havo tumani: kamera oralig'i (yaqin / majmua) o'zgarganda ham saqlanadi
 const _ar=P.applyRange;if(_ar)P.applyRange=function(){_ar.call(this);const w=this.fx?.weather;if(w&&w!=='clear'&&this.scene?.fog){const k=w==='rain'?.55:.6;this.scene.fog.near*=k;this.scene.fog.far*=k}};
+// effektlarni darhol tozalash (ssenariy to'xtatilganda yoki almashtirilganda)
+P.fxReset=function(){const F=this.fx;if(!F)return;Object.assign(F,{fire:0,leak:0,foam:0,flare:0,psv:0,water:0,truck:0,tu:0,puddleR:0,arrived:false});for(const k in F.cur)F.cur[k]=0;
+ for(const pp of [F.pFire,F.pSmoke,F.pLeak,F.pFoam,F.pFlare,F.pPsv,F.pWater]){pp.age.fill(1e9);pp.p.fill(-9999);pp.attr.needsUpdate=true;pp.pts.visible=false;pp.acc=0}
+ F.puddle.visible=false;F.ftruck.g.visible=false;F.fireLight.intensity=0;this.flareK=1};
 // ---- kamera parvozi (ekskursiya va ssenariylar uchun) ----
 P.flyTo=function(eye,target,far){if(!this.camera)return;this.viewId=far?'ethylene':'tour';this.applyRange?.();this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...eye),t1:new V3(...target),u:0}};
 // ---- har kadrda: effektlarni silliq yaqinlashtirish, zarrachalarni chiqarish, odamlar va texnikani harakatlantirish ----
 const _render=P.render;
-P.render=function(s,dt){const F=this.fx;if(F&&this.ready){F.rawDt=dt||0;dt=Math.min(dt||0,.1);F.t+=dt;const t=F.t,c=F.cur,ap=(k,tau)=>{c[k]+=(F[k]-c[k])*(1-Math.exp(-dt/tau))};
+P.render=function(s,dt){const F=this.fx;if(F&&this.ready){F.rawDt=dt||0;dt=Math.min(dt||0,.1);F.t+=dt;const t=F.t,c=F.cur,dts=Math.min(F.rawDt||dt,.25),ap=(k,tau)=>{c[k]+=(F[k]-c[k])*(1-Math.exp(-dts/tau))};
   ap('fire',3);ap('leak',1);ap('foam',4);ap('flare',2);ap('psv',1);ap('water',1.5);
   // yong'in: alanga + tutun + miltillovchi yorug'lik
   F.pFire.step(dt,c.fire*260,()=>[FIRE[0]+rr(-1.3,1.3),FIRE[1]+rr(0,.6),FIRE[2]+rr(-1,1),rr(-.4,.4),rr(2.5,5.5),rr(-.4,.4),rr(.5,1.1)]);

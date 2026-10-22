@@ -62,7 +62,7 @@ function ctxOf(){const r=run;return{s:App.state(),m:M(),t:(performance.now()-r.t
 function logLine(text,kind='info',args=[]){if(!run)return;const t=(performance.now()-run.t0)/1000;run.log.push({t,text,kind,args});drawRun();capRun()}
 const capRun=()=>{if(!run||!run.log.length)return;const l=run.log.at(-1);cap(`<b>${esc(tx(T(SC[run.id].title)))}</b> · ${esc(tx(T(l.text,...l.args)))}`)}
 function startScenario(id){stopAll();const sc=SC[id];run={id,t0:performance.now(),flags:{},log:[]};go3d();fresh();setTimeout(()=>{if(run?.id!==id)return;run.t0=performance.now();run.started=true;sc.start(ctxOf());drawRun()},350)}
-function stopScenario(){if(!run)return;const m=M();m.setFault('normal');if(run.id==='blowby')m.sisBypass('SIF-01',false);fx({fire:0,leak:0,foam:0,flare:0,psv:0,water:0,truck:0});restoreSpeed();setCut(true);cap(null);run=null;drawRun()}
+function stopScenario(){if(!run)return;const m=M();m.setFault('normal');if(run.id==='blowby')m.sisBypass('SIF-01',false);S3()?.fxReset?.();restoreSpeed();setCut(true);cap(null);run=null;drawRun()}
 function doAction(i){if(!run)return;const a=SC[run.id].actions[i],c=ctxOf();if(a.reset){const r=c.m.sisReset();logLine(r.still?.length?'RESET rad etildi: sabab hali bor — {0}':r.ok?.length?'SIS RESET qabul qilindi: {0}':'Faol trip yo‘q.',r.still?.length?'bad':'ok',[(r.still?.length?r.still:r.ok||[]).join(', ')])}else a.run(c)}
 setInterval(()=>{if(!run?.started)return;try{SC[run.id].tick(ctxOf())}catch(e){console.error(e)}},500);
 // ---------------------------------------------------------------- ekskursiya
