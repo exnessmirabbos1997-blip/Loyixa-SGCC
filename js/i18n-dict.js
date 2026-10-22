@@ -1,4 +1,4 @@
-// Interfeys lug'ati: [o'zbekcha (normallashtirilgan: teg = ⟨T⟩, son = ⟨#⟩), ruscha, inglizcha]. Yangi matn qo'shilsa — shu ro'yxatga yozuv qo'shing.
+// Interfeys lug'ati: [o'zbekcha (normallashtirilgan: teg = ⟨T⟩, son = ⟨#⟩), ruscha, inglizcha]. tools: scratchpad/mkdict.py
 window.I18N_DICT=[
 [
 "%Qref — har bir oqimning o‘z referens qiymatiga nisbati.",
@@ -529,21 +529,6 @@ window.I18N_DICT=[
 "FAZOVIY MODEL · apparatni bosing",
 "ПРОСТРАНСТВЕННАЯ МОДЕЛЬ · нажмите на аппарат",
 "SPATIAL MODEL · click an equipment item"
-],
-[
-"Faol alarm",
-"Активная тревога",
-"Active alarm"
-],
-[
-"Faol ogohlantirish yo‘q.",
-"Активных предупреждений нет.",
-"No active warnings."
-],
-[
-"Faol o‘quv ogohlantirishlari",
-"Активные учебные предупреждения",
-"Active training warnings"
 ],
 [
 "Faraz: xom gazda CO₂ ⟨#⟩ mol %, H₂S ⟨#⟩ mol %, MDEA ⟨#⟩ %. ⟨T⟩ ning o‘lchov komponenti va birligi texnolog bilan tasdiqlanishi kerak (ekranda ⟨T⟩ = CAL).",
@@ -1909,11 +1894,6 @@ window.I18N_DICT=[
 "SIS / ESD blokirovka",
 "Блокировки SIS / ESD",
 "SIS / ESD interlocks"
-],
-[
-"SIS normal",
-"SIS в норме",
-"SIS normal"
 ],
 [
 "SIS normal — barcha himoyalar faol",
@@ -3419,5 +3399,110 @@ window.I18N_DICT=[
 "⟨T⟩ · Amin",
 "⟨T⟩ · Амин",
 "⟨T⟩ · Amine"
+],
+[
+"Bosh kirish",
+"Главный въезд",
+"Main gate"
+],
+[
+"SUG fraksiyalash",
+"Фракционирование СУГ",
+"LPG fractionation"
+],
+[
+"Propan-butan · deetanizator · bufer sig‘imlar",
+"Пропан-бутан · деэтанизатор · буферные ёмкости",
+"Propane-butane · deethanizer · bullet vessels"
+],
+[
+"Kondensat barqarorlashtirish",
+"Стабилизация конденсата",
+"Condensate stabilization"
+],
+[
+"Stabilizatsiya kolonnalari · isitish pechi",
+"Колонны стабилизации · печь подогрева",
+"Stabilizer columns · fired heater"
+],
+[
+"DCS operator xonasi",
+"Операторная DCS",
+"DCS operator room"
+],
+[
+"SIS / ESD xonasi",
+"Помещение SIS / ESD",
+"SIS / ESD room"
+],
+[
+"Operatorlar: ⟨#⟩ · alarmlar: ⟨#⟩",
+"Операторы: ⟨#⟩ · аварийных сигналов: ⟨#⟩",
+"Operators: ⟨#⟩ · alarms: ⟨#⟩"
+],
+[
+"Operatorlar",
+"Операторы",
+"Operators"
+],
+[
+"alarmlar",
+"сигналы",
+"alarms"
+],
+[
+"Faol alarm",
+"Активный сигнал",
+"Active alarm"
+],
+[
+"Faol ogohlantirish yo‘q.",
+"Активных предупреждений нет.",
+"No active warnings."
+],
+[
+"Faol o‘quv ogohlantirishlari",
+"Активные учебные предупреждения",
+"Active training warnings"
+],
+[
+"SIS normal",
+"SIS в норме",
+"SIS normal"
+],
+[
+"⟨T⟩ · ⟨T⟩ AMIN BLOKI",
+"⟨T⟩ · ⟨T⟩ АМИНОВЫЙ БЛОК",
+"⟨T⟩ · ⟨T⟩ AMINE UNIT"
+],
+[
+"DCS xonasi",
+"Операторная DCS",
+"DCS room"
+],
+[
+"SIS xonasi",
+"Помещение SIS",
+"SIS room"
+],
+[
+"DCS · OPERATOR XONASI",
+"DCS · ОПЕРАТОРНАЯ",
+"DCS · OPERATOR ROOM"
+],
+[
+"MUHANDISLIK STANSIYASI",
+"ИНЖЕНЕРНАЯ СТАНЦИЯ",
+"ENGINEERING STATION"
+],
+[
+"⟨T⟩ · SIS XONASI",
+"⟨T⟩ · ПОМЕЩЕНИЕ SIS",
+"⟨T⟩ · SIS ROOM"
+],
+[
+"DCS XONASI",
+"ОПЕРАТОРНАЯ DCS",
+"DCS ROOM"
 ]
 ];

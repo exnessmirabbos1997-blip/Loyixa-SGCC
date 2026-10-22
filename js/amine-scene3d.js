@@ -13,7 +13,7 @@ function rnd(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math
 function canvasTex(w,h,draw,repeat){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;if(repeat){t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(repeat[0],repeat[1])}return t}
 function noiseTex(w,h,base,amp,seed,repeat,cb){return canvasTex(w,h,(x,W,H)=>{const R=rnd(seed);x.fillStyle=base;x.fillRect(0,0,W,H);const im=x.getImageData(0,0,W,H),d=im.data;for(let i=0;i<d.length;i+=4){const n=(R()-.5)*amp;d[i]+=n;d[i+1]+=n;d[i+2]+=n}x.putImageData(im,0,0);if(cb)cb(x,W,H,R)},repeat)}
 const concreteTex=()=>noiseTex(512,512,'#7d8085',34,5,[10,8],(x,W,H,R)=>{for(let i=0;i<70;i++){x.fillStyle=`rgba(${40+R()*30|0},${42+R()*30|0},${46+R()*30|0},${.05+R()*.08})`;x.beginPath();x.ellipse(R()*W,R()*H,10+R()*60,6+R()*30,R()*PI,0,PI*2);x.fill()}x.strokeStyle='rgba(30,32,36,.55)';x.lineWidth=3;x.strokeRect(0,0,W,H);for(let i=0;i<5;i++){x.strokeStyle='rgba(25,27,30,.28)';x.lineWidth=1.2;x.beginPath();let px=R()*W,py=R()*H;x.moveTo(px,py);for(let k=0;k<8;k++){px+=(R()-.5)*60;py+=(R()-.3)*50;x.lineTo(px,py)}x.stroke()}});
-const gravelTex=()=>noiseTex(256,256,'#4a4a48',70,9,[40,40]);
+const gravelTex=()=>noiseTex(256,256,'#76736b',64,9,[40,40]);
 const gratingTex=()=>canvasTex(128,128,(x,W,H)=>{x.fillStyle='#14181d';x.fillRect(0,0,W,H);x.fillStyle='#4b5560';for(let i=0;i<W;i+=16){x.fillRect(i,0,5,H)}x.fillStyle='#39424b';for(let j=0;j<H;j+=48)x.fillRect(0,j,W,3)},[1,1]);
 const brushedTex=()=>noiseTex(256,256,'#cfd5d8',26,3,[3,3],(x,W,H,R)=>{for(let i=0;i<220;i++){x.strokeStyle=`rgba(${R()>.5?255:80},${R()>.5?255:80},${R()>.5?255:90},.05)`;x.lineWidth=1;x.beginPath();const y=R()*H;x.moveTo(0,y);x.lineTo(W,y+(R()-.5)*3);x.stroke()}});
 const claddingTex=()=>canvasTex(256,64,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#c4cbcf');g.addColorStop(.5,'#e3e8ea');g.addColorStop(1,'#b3babf');x.fillStyle=g;x.fillRect(0,0,W,H);x.strokeStyle='rgba(60,70,78,.55)';x.lineWidth=2;for(let i=0;i<W;i+=64){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke()}},[2,1]);
@@ -85,7 +85,7 @@ class PlantScene{
  // flanga: disk + boltlar
  flange(p,r,axis='y',n=8,mat=this.m.steel){this.disc(p[0],p[1],p[2],r,.07,mat,axis,20);const bt=this.m.bolt;for(let i=0;i<n;i++){const a=i/n*PI*2,c=Math.cos(a)*r*.78,s=Math.sin(a)*r*.78;let q=[...p];if(axis==='y'){q[0]+=c;q[2]+=s}else if(axis==='x'){q[1]+=c;q[2]+=s}else{q[0]+=c;q[1]+=s}this.disc(q[0],q[1],q[2],r*.1,.13,bt,axis,6)}}
  // ---------------------------------------------------------------- tuproq / zamin
- buildGround(){const m=this.m;const g=new T.PlaneGeometry(400,400);g.rotateX(-PI/2);g.translate(0,-.06,0);const gm=new T.Mesh(g,m.gravel);gm.material.map.repeat.set(70,70);gm.receiveShadow=true;this.scene.add(gm);
+ buildGround(){const m=this.m;const g=new T.PlaneGeometry(96,84);g.rotateX(-PI/2);g.translate(-4,-.06,9);const gm=new T.Mesh(g,m.gravel);gm.material.map.repeat.set(17,15);gm.receiveShadow=true;this.scene.add(gm);
   // asosiy beton plita
   const cw=m.conc;cw.map.repeat.set(14,10);const sl=new T.Mesh(new T.BoxGeometry(62,.3,46),cw);sl.position.set(-2,-.1,1);sl.receiveShadow=true;this.scene.add(sl);
   // sariq xavfsizlik chizig'i va chetlik
