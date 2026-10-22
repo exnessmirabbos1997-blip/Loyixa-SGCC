@@ -6,6 +6,8 @@ operator trenajyori va AI erta ogohlantirish simulyatori. Muallif: dissertatsiya
 ## Tuzilma
 - `index.html`, `css/style.css`, `js/*.js` — manba. Oddiy `<script src>` (bundler yo‘q), tartib `index.html` da.
 - `js/amine-*.js` — amin ilovasi (model, AI, mnemosxema, 3D, ma’lumotlar). `js/scene3d.bundle.js` — three.js (`window.AmineThree`).
+- 3D: `amine-scene3d.js` (amin bloki, yoritish rejimlari), `amine-complex3d.js` (majmua, bosh kirish), `amine-rooms3d.js` (DCS, ISR-1), `amine-fx3d.js` (avariya effektlari, ob-havo, dala odamlari, texnika).
+- `amine-train.js` + `amine-train-dict.js` — «Mashq va avariyalar»: SIS ssenariylari, ekskursiya, demo, test, amaliy mashq, ovoz; o‘z RU/EN lug‘ati (`data-noi18n`).
 - `source/` — foydalanuvchi yuklagan asl fayl (o‘zgartirilmaydi, faqat solishtirish uchun).
 - `tools/build-single.js` → `dist/DA-1701-Absorber-AI.html` (bitta fayl, internetsiz).
 - `electron/` + `package.json` build → Windows NSIS .exe (`.github/workflows/desktop.yml`, workflow_dispatch `tag`).

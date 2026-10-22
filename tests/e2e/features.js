@@ -29,6 +29,15 @@ const fails=[];const ok=(c,m)=>{if(!c){fails.push(m);console.log('  ✗',m)}else
  // 3D majmua
  await p.click('.nav[data-view="3d"]');await p.waitForTimeout(6000);await p.click('[data-camera="complex"]');await p.waitForTimeout(3000);
  ok(await p.evaluate(()=>!!window.__PS?.inst?.ready&&window.__PS.inst.viewId==='complex'),'3D: majmua kamerasi');
+ // Mashq va avariyalar: ssenariy (yong'in → ESD-1), ob-havo, test, amaliy mashq, tarjima
+ await p.evaluate(()=>window.AmineTrain.start('fire'));await p.waitForFunction(()=>window.AmineApp.model.sis.esdActive(),null,{timeout:120000});
+ ok(await p.evaluate(()=>window.__PS.inst.fx.fire===1&&window.AmineApp.state().sis.esd),'Avariya: yong‘in → ESD-1 avtomatik');
+ await p.evaluate(()=>{window.AmineTrain.stop();window.__PS.inst.setWeather('rain')});ok(await p.evaluate(()=>window.__PS.inst.fx.rain.visible),'Ob-havo: yomg‘ir');await p.evaluate(()=>window.__PS.inst.setWeather('clear'));
+ await p.evaluate(()=>window.AmineApp.navigate('train'));await p.click('#trQuizGo');for(let i=0;i<8;i++){await p.click('[data-qa="0"]');await p.click('#trQuizNext')}
+ ok(await p.evaluate(()=>/\d+ \/ 8/.test(document.getElementById('trQuiz').textContent)),'Bilim testi yakunlanadi');
+ await p.click('#trExGo');ok(await p.evaluate(()=>document.getElementById('aScenario').style.visibility==='hidden'&&window.AmineApp.model.fault!=='normal'),'Amaliy mashq: yashirin nosozlik');
+ await p.click('[data-ex="0"]');await p.click('#trExEnd');ok(await p.evaluate(()=>window.AmineApp.model.fault==='normal'&&document.getElementById('aScenario').style.visibility===''),'Amaliy mashq: yakunlash');
+ await p.selectOption('#lang','en');ok(await p.evaluate(()=>document.querySelector('[data-ap="train"]').textContent.includes('Emergency scenarios')),'EN: Mashq bo‘limi tarjima qilindi');await p.selectOption('#lang','uz');
  ok(errs.length===0,'konsolda xato yo‘q'+(errs.length?': '+errs[0]:''));await ctx.close();
  // bitta HTML fayl
  const dist=path.join(root,'dist','DA-1701-Absorber-AI.html');

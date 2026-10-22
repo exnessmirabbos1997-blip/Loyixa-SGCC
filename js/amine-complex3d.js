@@ -60,7 +60,7 @@ P.buildBackground=function(){const m=this.m,R=rnd(31),PSc=this;
    for(let i=0;i<90;i++){x.fillStyle=`rgba(60,52,40,${.05+R()*.08})`;x.beginPath();x.ellipse(R()*W,R()*H,2+R()*9,2+R()*6,R()*3,0,7);x.fill()}
    const im=x.getImageData(0,0,W,H),d=im.data,F=W*.09;for(let i=0;i<d.length;i+=4){const n=(R()-.5)*22,px=(i>>2)%W,py=(i>>2)/W|0;d[i]+=n;d[i+1]+=n;d[i+2]+=n;
      const e=Math.min(px,W-1-px,py,H-1-py)/F;d[i+3]=255*Math.max(0,Math.min(1,e*e*(3-2*e)))}x.putImageData(im,0,0)},[1,1]);
- const soil=new T.Mesh(new T.PlaneGeometry(760,600),new T.MeshStandardMaterial({map:soilTex,transparent:true,depthWrite:false,roughness:1,metalness:0}));soil.rotation.x=-PI/2;soil.position.set(28,-.09,-28);soil.receiveShadow=true;soil.renderOrder=-1;this.scene.add(soil);
+ const soil=new T.Mesh(new T.PlaneGeometry(760,600),new T.MeshStandardMaterial({map:soilTex,transparent:true,depthWrite:false,roughness:1,metalness:0}));soil.rotation.x=-PI/2;soil.position.set(28,-.09,-28);soil.receiveShadow=true;soil.renderOrder=-1;this.scene.add(soil);this.soilMat=soil.material;
  const road=(x0,z0,x1,z1,w=7)=>{ROADS.push([x0,z0,x1,z1,w]);const L=Math.hypot(x1-x0,z1-z0),a=Math.atan2(x1-x0,z1-z0);const g=new T.PlaneGeometry(w,L);const uv=g.attributes.uv;for(let i=0;i<uv.count;i++)uv.setY(i,uv.getY(i)*L/14);g.rotateX(-PI/2);this.put(g,mc.road,(x0+x1)/2,-.03,(z0+z1)/2,0,a,0);
   for(const s of [-1,1])this.box((x0+x1)/2+Math.cos(a)*s*(w/2+.15),.02,(z0+z1)/2-Math.sin(a)*s*(w/2+.15),.3,.16,L,mc.curb,a);
   for(let d=20;d<L;d+=42){const px=x0+(x1-x0)*d/L+Math.cos(a)*(w/2+1.2),pz=z0+(z1-z0)*d/L-Math.sin(a)*(w/2+1.2);this.cylY(px,pz,0,9,.09,mc.galv,6);this.cylAB([px,9,pz],[px-Math.cos(a)*1.4,9.2,pz+Math.sin(a)*1.4],.05,mc.galv,4);this.box(px-Math.cos(a)*1.5,9.15,pz+Math.sin(a)*1.5,.6,.12,.3,m.lamp);NL.push(px-Math.cos(a)*1.5,9,pz+Math.sin(a)*1.5);LP.push(px-Math.cos(a)*1.5,pz+Math.sin(a)*1.5)}};
@@ -133,7 +133,7 @@ P.buildBackground=function(){const m=this.m,R=rnd(31),PSc=this;
  // SIS trip mayoqchasi (DA-1701 tepasida)
  this.beacon=new T.Sprite(new T.SpriteMaterial({map:this.glowT||(this.glowT=PS.glowTex()),transparent:true,blending:T.AdditiveBlending,depthWrite:false,fog:false,color:0xff2020}));this.beacon.position.set(5,19.2,0);this.beacon.scale.set(5,5,1);this.beacon.visible=false;this.scene.add(this.beacon);this.box(5,18.4,0,.5,.6,.5,mc.avia);
  // ---- 1. Amin bloki: B/C poezdlari va regenerator ----
- area('Amin bilan tozalash','DA-1701 batafsil · B, C poezdlari · regenerator',0,36,-6);fence(-4,8,78,76,10);
+ area('Amin bilan tozalash','DA-1701 batafsil · B, C poezdlari · regenerator',0,36,-6);fence(-4,8,78,68,14);
  for(const [x,z] of [[-62,-4],[62,-4]]){pad(x,z,40,30);column(x+6,z,1.8,24,{az:PI});vessel(x-6,3,z+6,1.3,7,mc.white,'z');frame(x-10,z-6,8,5,8,2);for(let i=0;i<3;i++)vessel(x-10,1.6+i*2.6,z-6,.9,8,mc.jacket);fence(x,z,44,34,6)}
  pad(36,-34,40,26);column(30,-34,2.2,32,{az:PI*.5});column(44,-38,1.4,14,{az:PI});vessel(40,2.8,-26,1.6,9);tank(52,-26,5,9);
  // ---- 2. Gaz qabul qilish: slag-kecher ----
@@ -268,7 +268,7 @@ P.setLook=function(k){this.farShadow=false;_setLook.call(this,k);if(this.scene?.
 P.setCamera=function(id,smooth=true){if(VIEWS[id]){if(!this.camera||!this.controls)return;this.viewId=id;this.applyRange();const v=VIEWS[id];if(smooth)this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...v[0]),t1:new V3(...v[1]),u:0};else{this.camera.position.set(...v[0]);this.controls.target.set(...v[1]);this.controls.update()}}
  else{if(id==='top'&&this.camera){this.viewId='top';const p=[[0,520,.1],[20,0,-20]];if(smooth)this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...p[0]),t1:new V3(...p[1]),u:0};else{this.camera.position.set(...p[0]);this.controls.target.set(...p[1])}}else _setCamera.call(this,id,smooth)}
  this.applyRange()};
-P.render=function(s,dt){if(this.ready){const t=this.animTime||0;for(const f of this.extraFlares||[]){const k=1+Math.sin(t*9+f.position.x)*.07+Math.sin(t*23)*.05;f.scale.set(14*k,22*(2-k),1)}
+P.render=function(s,dt){if(this.ready){const t=this.animTime||0;for(const f of this.extraFlares||[]){const k=1+Math.sin(t*9+f.position.x)*.07+Math.sin(t*23)*.05;const fk=this.flareK||1;f.scale.set(14*k*fk,22*(2-k)*fk,1)}
   for(const p of this.plumes||[]){const u=((t*.08+p.ph)%1);p.sp.position.y=p.y0+u*18;p.sp.scale.set(p.s*(1+u),p.s*(1+u)*.8,1);p.sp.material.opacity=(this.look!=='day'?.18:.5)*(1-u)}
   const far=['complex','ethylene','tank','top','gate'].includes(this.viewId);for(const o of this.areaObjs||[])o.sp.userData.area=true;this.__areaVisible=far}
  if(this.beacon){const tr=!!(s&&s.sis&&s.sis.trip&&s.sis.trip.length);this.beacon.visible=tr&&Math.sin((this.animTime||0)*7)>-.2}

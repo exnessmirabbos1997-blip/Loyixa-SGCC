@@ -37,7 +37,7 @@ class PlantScene{
   this.buildGround();this.buildCoolerFrame();this.buildCoolers();this.buildTower();this.buildSeparator();this.buildPipeRack();this.buildPiping();this.buildInstruments();this.buildSigns();this.buildStation();this.buildBackground();this.buildProcess();this.flush();
   this.setLook('dusk');this.setCamera('all',false);this.resize();this.ready=true;this.setCut(true);this.bindPointer();
   new ResizeObserver(()=>this.resize()).observe(host);
-  const bar=host.closest('.a-card')?.querySelector('.a-toolbar');if(bar&&!document.getElementById('aTod')){const b=document.createElement('button');b.className='asec';b.id='aTod';b.title='Kechki / kunduzgi yoritish';b.onclick=()=>{const o=['day','dusk','night'];this.setLook(o[(o.indexOf(this.look)+1)%3])};const sp=bar.querySelector('.spacer');bar.insertBefore(b,sp?sp.nextSibling:bar.firstChild);b.textContent='☾ Kechki'}
+  const bar=host.closest('.a-card')?.querySelector('.a-toolbar');if(bar&&!document.getElementById('aTod')){const b=document.createElement('button');b.className='asec';b.id='aTod';b.title='Kechki / kunduzgi yoritish';b.onclick=()=>{const o=['day','dusk','night','dawn'];this.setLook(o[(o.indexOf(this.look)+1)%4])};const sp=bar.querySelector('.spacer');bar.insertBefore(b,sp?sp.nextSibling:bar.firstChild);b.textContent='☾ Kechki'}
  }catch(e){console.error('3D:',e);const er=host.querySelector('.a3-error');if(er){er.hidden=false;er.textContent='WebGL ishga tushmadi. Mnemosxema barcha signallar bilan ishlashda davom etadi.'}}}
  // ---------------------------------------------------------------- materials
  makeMaterials(){const E=1.15,M=(o)=>new T.MeshStandardMaterial(o);const br=PS.brushedTex();
@@ -451,6 +451,8 @@ const LOOK={
   env:[[0,'#1e2f62'],[.38,'#6f6a98'],[.48,'#ffb070'],[.52,'#4a4150'],[1,'#151a26']],hemi:[0x7f95d6,0x4a3a32,1.05],sun:[0xffa060,2.7,[-42,13,28]],fill:[0x7f9cff,.75],expo:1.12,lamps:true,stars:true},
  day:{sky:[[0,'#2f6cb0'],[.35,'#7fb2e2'],[.47,'#d6e8f5'],[.5,'#f2f4ee'],[.508,'#8a949a'],[.6,'#68767e'],[1,'#4a5760']],fog:0xaebfca,fn:80,ff:260,
   env:[[0,'#4c78a6'],[.42,'#d6e6f2'],[.5,'#fff6de'],[.54,'#8c8b84'],[1,'#31394a']],hemi:[0xd8eaff,0x6c675c,1.25],sun:[0xffecd2,2.6,[-18,34,22]],fill:[0xbcdcff,.85],expo:1.2,lamps:false,stars:false},
+ dawn:{sky:[[0,'#1b3a6b'],[.3,'#4f78b0'],[.42,'#c9a3b8'],[.47,'#f7b27a'],[.5,'#ffd9a0'],[.508,'#5a5560'],[.6,'#3a3f4c'],[1,'#22262f']],fog:0x9a8fa0,fn:80,ff:250,
+  env:[[0,'#2a4a7a'],[.4,'#c8a8b8'],[.48,'#ffc890'],[.53,'#5a5048'],[1,'#1c2028']],hemi:[0xb8c8f0,0x5a4a3c,1.0],sun:[0xffb878,2.2,[38,12,-26]],fill:[0x9fb8ff,.6],expo:1.15,lamps:true,stars:false},
  night:{sky:[[0,'#02050d'],[.3,'#06122a'],[.45,'#0f2248'],[.5,'#1c2e55'],[.508,'#0b0f18'],[.6,'#080b12'],[1,'#05070b']],fog:0x0c1424,fn:70,ff:240,
   env:[[0,'#0a1020'],[.35,'#1e2a48'],[.48,'#b0682c'],[.52,'#6a4420'],[1,'#140d08']],hemi:[0x4a5c90,0x7a4a20,1.05],sun:[0x9ab2ff,.6,[30,40,-20]],fill:[0x3a56a8,.35],expo:1.2,lamps:true,stars:true}};
 const grad=(w,h,stops)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,0,h);for(const [o,col] of stops)g.addColorStop(o,col);x.fillStyle=g;x.fillRect(0,0,w,h);return c};
@@ -461,7 +463,7 @@ P.setLook=function(k){const L=LOOK[k];this.look=k;
  this.hemi.color.setHex(L.hemi[0]);this.hemi.groundColor.setHex(L.hemi[1]);this.hemi.intensity=L.hemi[2];
  this.sun.color.setHex(L.sun[0]);this.sun.intensity=L.sun[1];this.sun.position.set(...L.sun[2]);this.sun.target.position.set(0,5,0);this.scene.add(this.sun.target);this.fill.color.setHex(L.fill[0]);this.fill.intensity=L.fill[1];
  this.renderer.toneMappingExposure=L.expo;this.lampLights.forEach((l,i)=>{l.intensity=L.lamps?(i<3?85:45):0});for(const o of this.lampObjs)o.visible=L.lamps;
- this.renderer.shadowMap.needsUpdate=true;const b=document.getElementById('aTod');if(b)b.textContent=k==='night'?'★ Tungi':k==='dusk'?'☾ Kechki':'☀ Kunduzgi'};
+ this.renderer.shadowMap.needsUpdate=true;const b=document.getElementById('aTod');if(b)b.textContent=k==='night'?'★ Tungi':k==='dusk'?'☾ Kechki':k==='dawn'?'🌅 Tong':'☀ Kunduzgi'};
 P.setCamera=function(id,smooth=true){if(!this.camera||!this.controls)return;this.viewId=id;
  const views={all:[[31,19,37],[-1,8.5,0]],tower:[[15,12.5,24],[5,10.3,0]],sep:[[-1,6.6,14.5],[-2.5,4.9,2]],cool:[[-19,8,15.5],[-11,5.2,0]],top:[[0,72,.1],[0,0,0]],station:[[8,7,23],[-.5,1.8,11.1]]};const v=views[id]||views.all;
  if(smooth){this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...v[0]),t1:new V3(...v[1]),u:0}}else{this.camera.position.set(...v[0]);this.controls.target.set(...v[1]);this.controls.update()}};

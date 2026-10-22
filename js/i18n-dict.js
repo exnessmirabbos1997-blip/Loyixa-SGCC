@@ -3514,5 +3514,60 @@ window.I18N_DICT=[
 "☀ Kunduzgi",
 "☀ День",
 "☀ Day"
+],
+[
+"Mashq va avariyalar",
+"Тренировка и аварии",
+"Training & emergencies"
+],
+[
+"Avariya ssenariylari (3D effektlar, SIS javobi), ekskursiya, demo, bilim testi va amaliy diagnostika mashqi.",
+"Аварийные сценарии (3D-эффекты, реакция SIS), экскурсия, демо, тест знаний и практическая диагностика.",
+"Emergency scenarios (3D effects, SIS response), guided tour, demo, knowledge quiz and diagnostic practice."
+],
+[
+"☀ Ochiq",
+"☀ Ясно",
+"☀ Clear"
+],
+[
+"🌧 Yomg‘ir",
+"🌧 Дождь",
+"🌧 Rain"
+],
+[
+"❄ Qor",
+"❄ Снег",
+"❄ Snow"
+],
+[
+"🌅 Tong",
+"🌅 Рассвет",
+"🌅 Dawn"
+],
+[
+"ZAHARLI GAZ",
+"ЯДОВИТЫЙ ГАЗ",
+"TOXIC GAS"
+],
+[
+"Gaz detektori bilan kiring",
+"Входить с газоанализатором",
+"Enter with a gas detector"
+],
+[
+"KASKA MAJBURIY",
+"КАСКА ОБЯЗАТЕЛЬНА",
+"HARD HAT REQUIRED"
+],
+[
+"Jilet va ko‘zoynak",
+"Жилет и очки",
+"Vest and goggles"
+],
+[
+"Ob-havo: ochiq / yomg‘ir / qor",
+"Погода: ясно / дождь / снег",
+"Weather: clear / rain / snow"
 ]
 ];

@@ -219,7 +219,7 @@ P.drawCabinet=function(c,s,kind,idx,name){const W=192,H=384,z=s.sis||{trip:[],by
 const _bb=P.buildBackground,_render=P.render,_cut=P.setCut,_look=P.setLook,_paint=P.paintLabel,_cam=P.setCamera;
 P.buildBackground=function(){_bb.call(this);try{this.buildRooms()}catch(e){console.error('3D xonalar:',e)}};
 P.setCut=function(on){_cut.call(this,on)};// xona tomlari doim yopiq
-P.setLook=function(k){_look.call(this,k);for(const l of this.rooms?.lamps||[])l.intensity=k==='night'?26:k==='dusk'?18:10};
+P.setLook=function(k){_look.call(this,k);for(const l of this.rooms?.lamps||[])l.intensity=k==='night'?26:k==='day'?10:18};
 // ichki kameralar: DCS — old o'ng burchakdan pultlar va video-devorga; ISR-1 — eshik oldidan shkaflar yo'lagi bo'ylab
 const ROOMCAM={dcsroom:[[DCS.x+7.4,1.85,DCS.z+DCS.d/2-.7],[DCS.x-3,1.3,DCS.z-DCS.d/2+1.6]],sisroom:[[SISB.x-2.15,1.68,SISB.z+SISB.d/2-.45],[SISB.x-2.15,1.35,SISB.z-SISB.d/2+.3]]};
 P.setCamera=function(id,smooth=true){if(ROOMCAM[id]&&this.camera){this.viewId=id;const v=ROOMCAM[id];if(smooth)this.cameraMove={p0:this.camera.position.clone(),t0:this.controls.target.clone(),p1:new V3(...v[0]),t1:new V3(...v[1]),u:0};else{this.camera.position.set(...v[0]);this.controls.target.set(...v[1])}this.applyRange?.();return}
